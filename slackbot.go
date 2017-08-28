@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"encoding/json"
 )
@@ -31,18 +30,17 @@ type slackRsp struct {
 
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	var cmd slackCmd
+	//var cmd slackCmd
 
 	if r.Body == nil {
 		http.Error(w, "Please send a request body", 400)
 		return
 	}
-	err := json.NewDecoder(r.Body).Decode(&cmd)
+	/*err := json.NewDecoder(r.Body).Decode(&cmd)
 	if err != nil {
 		http.Error(w, err.Error(), 400)
 		return
-	}
-	fmt.Println(cmd.user_name)
+	}*/
 
 	rsp := slackRsp{text: "All fine"}
 
