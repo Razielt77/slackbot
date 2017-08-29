@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"encoding/json"
+	"github.com/gorilla/Schema"
 )
 
 
@@ -33,19 +34,31 @@ type slackRsp struct {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 
-	//var cmd slackCmd
+	var cmd slackCmd
 
 	if r.Body == nil {
 		http.Error(w, "Please send a request body", 400)
 		return
 	}
-	fmt.Println("Body- %s", r.Body)
 
-	/*err := json.NewDecoder(r.Body).Decode(&cmd)
+
+	err := r.ParseForm()
+
+	if err != nil {
+		fmt.Println("Cannot parse %s", r.Body)
+		http.Error(w, "Cannot Parse", 400)
+	}
+
+	decoder := schema.NewDecoder()
+	// r.PostForm is a map of our POST form values
+	err = decoder.Decode(cmd, r.PostForm)
+
+	//err := json.NewDecoder(r.Body).Decode(&cmd)
 	if err != nil {
 		http.Error(w, err.Error(), 400)
+		fmt.Println("Cannot decode")
 		return
-	}*/
+	}
 
 
 	var rsp slackRsp
