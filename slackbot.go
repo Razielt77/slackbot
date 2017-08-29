@@ -59,7 +59,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}*/
 
-
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(rsp)
 
 	//fmt.Fprintf(w, "Hi there, I love %s! and %s", rsp, js)
