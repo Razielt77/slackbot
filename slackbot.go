@@ -44,12 +44,24 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	rsp := slackRsp{text: "All fine"}
 
-	json.NewEncoder(w).Encode(rsp)
+	js, err := json.Marshal(rsp)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
+
+
+
+	//json.NewEncoder(w).Encode(rsp)
 
 	//fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
 }
 
 func main() {
 	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":80", nil)
 }
