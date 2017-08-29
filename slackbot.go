@@ -33,7 +33,7 @@ type slackRsp struct {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 
-	var cmd slackCmd
+	//var cmd slackCmd
 
 	if r.Body == nil {
 		http.Error(w, "Please send a request body", 400)
@@ -41,11 +41,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("Body- %s", r.Body)
 
-	err := json.NewDecoder(r.Body).Decode(&cmd)
+	/*err := json.NewDecoder(r.Body).Decode(&cmd)
 	if err != nil {
 		http.Error(w, err.Error(), 400)
 		return
-	}
+	}*/
 
 
 	var rsp slackRsp
