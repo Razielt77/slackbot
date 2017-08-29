@@ -7,29 +7,6 @@ import (
 )
 
 
-type slackCmd struct {
-	Token    		string      `json:"token"`
-	Team_id  		string      `json:"team_id"`
-	Team_domain   	string      `json:"team_domain"`
-	Enterprise_id	string 		`json:"enterprise_id"`
-	Enterprise_name	string		`json:"enterprise_name"`
-	Channel_id		string 		`json:"channel_id"`
-	Channel_name	string	    `json:"channel_name"`
-	User_id			string 		`json:"user_id"`
-	User_name		string 		`json:"user_name"`
-	Command			string 	  	`json:"command"`
-	Text			string		`json:"text"`
-	Response_url	string		`json:"response_url"`
-
-}
-
-
-
-type slackRsp struct {
-	Text	string `json:"text"`
-}
-
-
 
 func handler(w http.ResponseWriter, r *http.Request) {
 
@@ -41,36 +18,23 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 
-	err := r.ParseForm()
+	err := cmd.ExtractCmd(r, true)
 
-	if err != nil {
+	if err != true {
 		fmt.Println("Cannot parse %s", r.Body)
 		http.Error(w, "Cannot Parse", 400)
+		return
 	}
-
-	cmd.Text = r.Form.Get("text")
-
-
-	//err := json.NewDecoder(r.Body).Decode(&cmd)
-
 
 
 	var rsp slackRsp
 
 	if cmd.Text != ""{
-		rsp.Text = cmd.Text
+		rsp.Text = "All fine. Received text: " + cmd.Text
 	}else{
 		rsp.Text = "All fine"
 	}
 
-	//rsp.Id = "11"
-
-	/*js, err := json.Marshal(rsp)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}*/
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(rsp)
