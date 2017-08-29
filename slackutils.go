@@ -46,7 +46,8 @@ func (r *slackCmd) ExtractCmd(req *http.Request, log bool) bool {
 	r.Response_url = req.Form.Get("Response_url")
 
 	if log != false {
-		fmt.Println("Cmd received: %s", r)
+
+		fmt.Printf("Command received\n %+v\n", r)
 	}
 
 	return true
