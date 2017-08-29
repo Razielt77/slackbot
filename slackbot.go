@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"encoding/json"
-	"github.com/gorilla/Schema"
 )
 
 
@@ -19,7 +18,7 @@ type slackCmd struct {
 	User_id			string 		`json:"user_id"`
 	User_name		string 		`json:"user_name"`
 	Command			string 	  	`json:"command"`
-	Rext			string		`json:"text"`
+	Text			string		`json:"text"`
 	Response_url	string		`json:"response_url"`
 
 }
@@ -49,20 +48,21 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Cannot Parse", 400)
 	}
 
-	decoder := schema.NewDecoder()
-	// r.PostForm is a map of our POST form values
-	err = decoder.Decode(cmd, r.PostForm)
+	cmd.Text = r.Form.Get("text")
+
 
 	//err := json.NewDecoder(r.Body).Decode(&cmd)
-	if err != nil {
-		http.Error(w, err.Error(), 400)
-		fmt.Println("Cannot decode")
-		return
-	}
+
 
 
 	var rsp slackRsp
-	rsp.Text = "All fine"
+
+	if cmd.Text != ""{
+		rsp.Text = cmd.Text
+	}else{
+		rsp.Text = "All fine"
+	}
+
 	//rsp.Id = "11"
 
 	/*js, err := json.Marshal(rsp)
