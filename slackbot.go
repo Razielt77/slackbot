@@ -1,67 +1,85 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"encoding/json"
 )
 
 
 type slackCmd struct {
-	token    		string       //  `gIkuvaNzQIHg97ATvDxqgjtO`
-	team_id  		string       // `T0001`
-	team_domain   	string       // `example`
-	enterprise_id	string 		//  'E0001'
-	enterprise_name	string		//  Globular%20Construct%20Inc
-	channel_id		string 		//	C2147483705
-	channel_name	string	    //  test
-	user_id			string 		// U2147483697
-	user_name		string 		// Steve
-	command			string 	  	//weather
-	text			string		//94070
-	response_url	string		//https://hooks.slack.com/commands/1234/5678
+	Token    		string      `json:"token"`
+	Team_id  		string      `json:"team_id"`
+	Team_domain   	string      `json:"team_domain"`
+	Enterprise_id	string 		`json:"enterprise_id"`
+	Enterprise_name	string		`json:"enterprise_name"`
+	Channel_id		string 		`json:"channel_id"`
+	Channel_name	string	    `json:"channel_name"`
+	User_id			string 		`json:"user_id"`
+	User_name		string 		`json:"user_name"`
+	Command			string 	  	`json:"command"`
+	Rext			string		`json:"text"`
+	Response_url	string		`json:"response_url"`
 
 }
 
 
+
 type slackRsp struct {
-	text			string
+	Text	string `json:"text"`
 }
 
 
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	//var cmd slackCmd
+
+	var cmd slackCmd
 
 	if r.Body == nil {
 		http.Error(w, "Please send a request body", 400)
 		return
 	}
-	/*err := json.NewDecoder(r.Body).Decode(&cmd)
+	fmt.Println("Body- %s", r.Body)
+
+	err := json.NewDecoder(r.Body).Decode(&cmd)
 	if err != nil {
 		http.Error(w, err.Error(), 400)
 		return
-	}*/
+	}
 
-	rsp := slackRsp{text: "All fine"}
 
-	js, err := json.Marshal(rsp)
+	var rsp slackRsp
+	rsp.Text = "All fine"
+	//rsp.Id = "11"
+
+	/*js, err := json.Marshal(rsp)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
+	}*/
 
 
+	json.NewEncoder(w).Encode(rsp)
 
-	//json.NewEncoder(w).Encode(rsp)
-
+	//fmt.Fprintf(w, "Hi there, I love %s! and %s", rsp, js)
 	//fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
 }
 
 func main() {
 	http.HandleFunc("/", handler)
-	http.ListenAndServe(":80", nil)
+
+	/*var rsp slackRsp
+	rsp.text = "All fine"
+	rsp.id = "dd"
+	js, err := json.Marshal(rsp)
+
+	if err != nil {
+		fmt.Println("Error")
+		return
+	}
+	fmt.Println("js - %s rsp - %s", js, rsp)*/
+
+
+	http.ListenAndServe(":8080", nil)
 }
