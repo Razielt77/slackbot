@@ -29,11 +29,27 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	var rsp slackRsp
 
-	if cmd.Text != ""{
+	rsp.Text = "*hmm...seems like you haven't logged in recently*"
+	att := Attachment{Title:"How would you like to login", Callback_id: "login", Attachment_type: "default"}
+	att.Actions = []Action{{Name: "github", Text: "Github", Type: "button" ,Value: "github"},
+						   {Name: "bitbucket", Text: "Bitbucket", Type: "button" ,Value: "bitbucket"},
+						   {Name: "gitlab", Text: "Gitlab", Type: "button" ,Value: "gitlab"}}
+	rsp.Attachments = []Attachment{att}
+
+
+	/*slackRsp = {
+		"*hmm...seems like you haven/'t logged in recently*",
+		[1]Attachment{"How would you like to login","comic_1234_xyz","default",
+			[3]Action{"recommend", "Github","button","github"}
+		}
+
+	}*/
+
+	/*if cmd.Text != ""{
 		rsp.Text = "All fine. Received text: " + cmd.Text
 	}else{
 		rsp.Text = "All fine"
-	}
+	}*/
 
 
 	w.Header().Set("Content-Type", "application/json")

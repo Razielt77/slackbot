@@ -54,7 +54,60 @@ func (r *slackCmd) ExtractCmd(req *http.Request, log bool) bool {
 }
 
 
+type Action struct {
+	Name 	string `json:"name"`
+	Text 	string `json:"text"`
+	Type 	string `json:"type"`
+	Value 	string `json:"value"`
+	Style 	string `json:"style"`
+}
+
+type Attachment struct {
+	Title 				string `json:"title"`
+	Callback_id 		string `json:"callback_id"`
+	Attachment_type 	string `json:"attachment_type"`
+	Actions 			[] Action `json:"actions"`
+}
+
+
+
 
 type slackRsp struct {
-	Text	string `json:"text"`
+	Text		string `json:"text"`
+	Attachments []Attachment `json:"attachments"`
 }
+
+/*
+
+{
+	"Text": "*hmm...seems like you haven't logged in recently*",
+	"Attachments": [
+			{
+			"Title": "How would you like to login?",
+			"Callback_id": "comic_1234_xyz",
+			"Attachment_type": "default",
+			"Actions": [
+			{
+				"Name": "recommend",
+				"Text": "Github",
+				"Type": "button",
+				"Value": "github"
+			},
+			{
+				"Name": "recommend",
+				"Text": "Bitbucket",
+				"Type": "button",
+				"Value": "bitbucket"
+			},
+			{
+				"Name": "recommend",
+				"Text": "Gitlab",
+				"Type": "button",
+				"Value": "gitlab"
+			}
+		]
+		}
+	]
+}
+
+*/
