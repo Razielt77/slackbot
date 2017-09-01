@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"fmt"
+	"encoding/json"
 )
 
 type slackCmd struct {
@@ -142,8 +143,20 @@ func (a *actionMsg) extractMsg (req *http.Request, log bool) bool {
 	j := req.Form.Get("payload")
 
 	if log != false {
-		fmt.Printf("Command received\n %+v\n", j)
+		fmt.Printf("Command received\n %s\n", j)
 	}
+
+	err = json.Unmarshal([]byte(j), a)
+
+	if err != nil {
+		fmt.Printf("Cannot unmarshal \n")
+		return false
+	}
+
+	if log != false {
+		fmt.Printf("Marshal succeded for user\n%s\n", a.User.Name)
+	}
+
 
 	return true
 }
