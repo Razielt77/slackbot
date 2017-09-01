@@ -75,7 +75,7 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 
-	rsp.composeLoginScs()
+	rsp.composeLoginScs(cmd)
 
 	/*usr, ok := users[cmd.User_id]
 

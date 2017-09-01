@@ -94,10 +94,11 @@ func (r *slackRsp) composeLogin() {
 }
 
 
-func (r *slackRsp) composeLoginScs() {
+func (r *slackRsp) composeLoginScs(a actionMsg) {
 
+	txt :=":white_check_mark: <" + a.User.Id + "|" + a.User.Name + "> you are now logged in"
 
-	att := Attachment{Text: ":white_check_mark: This message  contains a URL <http://foo.com/>", Callback_id: "login", Attachment_type: "default"}
+	att := Attachment{Text: txt, Callback_id: "login", Attachment_type: "default"}
 	r.Attachments = []Attachment{att}
 	return
 }
