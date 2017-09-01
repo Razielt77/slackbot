@@ -67,6 +67,7 @@ type Attachment struct {
 	Callback_id 		string `json:"callback_id"`
 	Attachment_type 	string `json:"attachment_type"`
 	Actions 			[] Action `json:"actions"`
+	Text 				string	`json:"text"`
 }
 
 
@@ -77,37 +78,73 @@ type slackRsp struct {
 	Attachments []Attachment `json:"attachments"`
 }
 
-/*
 
-{
-	"Text": "*hmm...seems like you haven't logged in recently*",
-	"Attachments": [
-			{
-			"Title": "How would you like to login?",
-			"Callback_id": "comic_1234_xyz",
-			"Attachment_type": "default",
-			"Actions": [
-			{
-				"Name": "recommend",
-				"Text": "Github",
-				"Type": "button",
-				"Value": "github"
-			},
-			{
-				"Name": "recommend",
-				"Text": "Bitbucket",
-				"Type": "button",
-				"Value": "bitbucket"
-			},
-			{
-				"Name": "recommend",
-				"Text": "Gitlab",
-				"Type": "button",
-				"Value": "gitlab"
-			}
-		]
-		}
-	]
+func (r *slackRsp) composeLogin() {
+
+
+	r.Text = "*hmm...seems like you haven't logged in recently*"
+	att := Attachment{Title:"How would you like to login", Callback_id: "login", Attachment_type: "default"}
+	att.Actions = []Action{{Name: "login", Text: "Github", Type: "button" ,Value: "github"},
+						   {Name: "login", Text: "Bitbucket", Type: "button" ,Value: "bitbucket"},
+						   {Name: "login", Text: "Gitlab", Type: "button" ,Value: "gitlab"}}
+	r.Attachments = []Attachment{att}
+
+	return
 }
 
-*/
+
+func (r *slackRsp) composeLoginScs() {
+
+
+	att := Attachment{Text: ":white_check_mark: This message  contains a URL <http://foo.com/>", Callback_id: "login", Attachment_type: "default"}
+	r.Attachments = []Attachment{att}
+	return
+}
+
+
+type actionMsg struct{
+	Actions []struct {
+						Name string		`json:"name"`
+						Value string 	`json:"value"`
+						Type string 	`json:"type"`
+						} `json:"actions"`
+	Callback_id	string	`json:"callback_id"`
+	Team		struct{
+						Id 		string	`json:"id"`
+						Domain 	string	`json:"domain"`
+						}	`json:"team"`
+	Channel		struct{
+		Id 		string	`json:"id"`
+		Name 	string	`json:"name"`
+	}	`json:"channel"`
+
+	User		struct{
+		Id 		string	`json:"id"`
+		Name 	string	`json:"name"`
+	}	`json:"user"`
+
+	Action_ts			string	`json:"action_ts"`
+	Message_ts			string	`json:"message_ts"`
+	Attachment_id		string	`json:"attachment_id"`
+	Token				string	`json:"token"`
+	Original_message	string	`json:"original_message"`
+	Response_url		string	`json:"response_url"`
+
+}
+
+func (a *actionMsg) extractMsg (req *http.Request, log bool) bool {
+	err := req.ParseForm()
+
+	if err != nil {
+		return false
+	}
+
+	j := req.Form.Get("payload")
+
+	if log != false {
+		fmt.Printf("Command received\n %+v\n", j)
+	}
+
+	return true
+}
+
