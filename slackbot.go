@@ -29,18 +29,28 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//if command require login than check if user logged in (have a context) if not it asks him/her to login
 	if cmd.LoginRequired() {
 		usr, ok := users[cmd.User_id]
 
 		if !ok {
 			rsp.composeLogin()
 			//users[cmd.User_id] = User{Name:cmd.User_name}
-		}else{
-			rsp.Text = "User " + usr.Name + " exist."
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(rsp)
+			return
 		}
-	}else {
-		rsp.Text = "Version 1."
+		fmt.Println("User %s run command %s", usr.Name, cmd.Text)
+
 	}
+
+	var clicmd Cfcmd
+	if clicmd.ConstructCmd(cmd.Text){
+		clicmd.RunCmd(&rsp)
+	}else{
+		rsp.Text = "Bad command " + cmd.Text
+	}
+
 
 
 
