@@ -1,5 +1,9 @@
 FROM golang:1.8
 
+RUN cd /usr/local/bin && \
+    wget -qO- https://github.com/codefresh-io/cli/releases/download/v0.13.2/codefresh-v0.13.2-linux-x64.tar.gz\
+     | tar xvz
+
 WORKDIR /go/src/app
 COPY . .
 
