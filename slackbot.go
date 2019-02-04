@@ -29,15 +29,19 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if cmd.LoginRequired() {
+		usr, ok := users[cmd.User_id]
 
-	usr, ok := users[cmd.User_id]
-
-	if !ok {
-		rsp.composeLogin()
-		//users[cmd.User_id] = User{Name:cmd.User_name}
-	}else{
-		rsp.Text = "User " + usr.Name + " exist."
+		if !ok {
+			rsp.composeLogin()
+			//users[cmd.User_id] = User{Name:cmd.User_name}
+		}else{
+			rsp.Text = "User " + usr.Name + " exist."
+		}
+	}else {
+		rsp.Text = "Version 1."
 	}
+
 
 
 	w.Header().Set("Content-Type", "application/json")

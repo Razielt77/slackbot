@@ -54,6 +54,18 @@ func (r *slackCmd) ExtractCmd(req *http.Request, log bool) bool {
 	return true
 }
 
+func (r *slackCmd) LoginRequired() bool {
+
+	switch r.Text {
+	case "version":
+		return false
+	case "Version":
+		return false
+	default:
+		return true
+	}
+}
+
 
 type Action struct {
 	Name 	string `json:"name"`
