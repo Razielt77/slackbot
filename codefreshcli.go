@@ -26,10 +26,10 @@ func (cmd *Cfcmd) ConstructCmd (str string) bool {
 	return true
 }
 
-func (cmd *Cfcmd) RunCmd (rsp *slackRsp) bool {
+func (cmd *Cfcmd) RunCmd (rsp *slackRsp) (err string, ok bool){
 
-	rsp.Text = "Version 0.1"
+	rsp.Text = "Slackbot version: 0.1\n Codefresh CLI version: 2.2"
 
-	return true
+	return "", true
 }
 

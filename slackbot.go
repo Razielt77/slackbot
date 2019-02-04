@@ -46,7 +46,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	var clicmd Cfcmd
 	if clicmd.ConstructCmd(cmd.Text){
-		clicmd.RunCmd(&rsp)
+
+		err, ok := clicmd.RunCmd(&rsp)
+		if !ok{
+			rsp.Text = "Error executing command err: " + err
+		}
 	}else{
 		rsp.Text = "Bad command " + cmd.Text
 	}
