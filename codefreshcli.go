@@ -32,16 +32,20 @@ func (cmd *Cfcmd) ConstructCmd (str string) bool {
 }
 
 func (cmd *Cfcmd) RunCmd (rsp *slackRsp) (err error, ok bool){
+	var out []byte
+	switch cmd.command {
+	case "version":
+		out, err = exec.Command("codefresh", "version").Output()
+		if err != nil {
+			log.Fatal(err)
+			return err, false
+		}
+		fmt.Printf("%s", out)
+		rsp.Text = "*Slackbot version: 0.1\n" + string(out) +"*"
+	default:
+		rsp.Text = "*" + cmd.command + " is not supported yet. Stay tune.*"
 
-
-	out, err := exec.Command("codefresh", "version").Output()
-	if err != nil {
-		log.Fatal(err)
-		return err, false
 	}
-	fmt.Printf("%s", out)
-
-	rsp.Text = "Slackbot version: 0.1\n  " + string(out)
 
 	return nil, true
 }
