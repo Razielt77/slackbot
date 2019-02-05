@@ -57,6 +57,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 
 
+	rsp.ResponseType = "in_channel"
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(rsp)
