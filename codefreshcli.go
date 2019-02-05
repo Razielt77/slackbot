@@ -1,6 +1,11 @@
 package main
 
-import "strings"
+import (
+	"fmt"
+	"log"
+	"os/exec"
+	"strings"
+)
 
 type Cfcmd struct {
 
@@ -26,10 +31,18 @@ func (cmd *Cfcmd) ConstructCmd (str string) bool {
 	return true
 }
 
-func (cmd *Cfcmd) RunCmd (rsp *slackRsp) (err string, ok bool){
+func (cmd *Cfcmd) RunCmd (rsp *slackRsp) (err error, ok bool){
 
-	rsp.Text = "Slackbot version: 0.1\n Codefresh CLI version: 2.2"
 
-	return "", true
+	out, err := exec.Command("codefresh", "version").Output()
+	if err != nil {
+		log.Fatal(err)
+		return err, false
+	}
+	fmt.Printf("%s", out)
+
+	rsp.Text = "Slackbot version: 0.1\n  " + string(out)
+
+	return nil, true
 }
 
