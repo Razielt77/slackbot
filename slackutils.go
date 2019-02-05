@@ -98,6 +98,7 @@ type slackRsp struct {
 func (r *slackRsp) composeLogin() {
 
 
+	r.ResponseType = "in_channel"
 	r.Text = "*hmm...seems like you haven't logged in recently*"
 	att := Attachment{
 		Title:"Codefresh CLI Authentication",
