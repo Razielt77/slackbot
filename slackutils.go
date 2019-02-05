@@ -1,9 +1,9 @@
 package main
 
 import (
-	"net/http"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"net/http"
 )
 
 type slackCmd struct {
@@ -77,6 +77,8 @@ type Action struct {
 
 type Attachment struct {
 	Title 				string `json:"title"`
+	Color 				string `json:"color"`
+	TitleLink 			string `json:"title_link"`
 	Callback_id 		string `json:"callback_id"`
 	Attachment_type 	string `json:"attachment_type"`
 	Actions 			[] Action `json:"actions"`
@@ -96,12 +98,17 @@ type slackRsp struct {
 func (r *slackRsp) composeLogin() {
 
 
-	r.Text = "*hmm...seems like you haven't logged in recently*\nPlease run `/codefresh auth create-context`\nLearn more at https://codefresh-io.github.io/cli/getting-started/"
+	r.Text = "*hmm...seems like you haven't logged in recently*"
+	att := Attachment{
+		Title:"Codefresh CLI Authentication",
+		TitleLink:"https://codefresh-io.github.io/cli/authentication",
+		Color:"#11b5a4",
+		Text: "Please run `/codefresh auth create-context`\nLearn more at https://codefresh-io.github.io/cli/getting-started/"}
 	/*att := Attachment{Title:"How would you like to login", Callback_id: "login", Attachment_type: "default"}
 	att.Actions = []Action{{Name: "login", Text: "Github", Type: "button" ,Value: "github"},
 						   {Name: "login", Text: "Bitbucket", Type: "button" ,Value: "bitbucket"},
-						   {Name: "login", Text: "Gitlab", Type: "button" ,Value: "gitlab"}}
-	r.Attachments = []Attachment{att}*/
+						   {Name: "login", Text: "Gitlab", Type: "button" ,Value: "gitlab"}}*/
+	r.Attachments = []Attachment{att}
 
 	return
 }
