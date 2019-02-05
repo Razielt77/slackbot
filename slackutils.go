@@ -96,7 +96,7 @@ type slackRsp struct {
 func (r *slackRsp) composeLogin() {
 
 
-	r.Text = "*hmm...seems like you haven't logged in recently*\nPlease run <code>/codefresh auth create-context</code>\nLearn more at https://codefresh-io.github.io/cli/getting-started/"
+	r.Text = "*hmm...seems like you haven't logged in recently*\nPlease run `/codefresh auth create-context`\nLearn more at https://codefresh-io.github.io/cli/getting-started/"
 	/*att := Attachment{Title:"How would you like to login", Callback_id: "login", Attachment_type: "default"}
 	att.Actions = []Action{{Name: "login", Text: "Github", Type: "button" ,Value: "github"},
 						   {Name: "login", Text: "Bitbucket", Type: "button" ,Value: "bitbucket"},
