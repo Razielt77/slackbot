@@ -85,7 +85,7 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//extracting the command
-	err := cmd.extractMsg(r, true)
+	/*err := cmd.extractMsg(r, true)
 
 	if err != true {
 		fmt.Println("Cannot parse %s", r.Body)
@@ -94,7 +94,7 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 
-	rsp.composeLoginScs(cmd)
+	rsp.composeLoginScs(cmd)*/
 
 	/*usr, ok := users[cmd.User_id]
 
@@ -104,6 +104,9 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 	}else{
 		rsp.Text = "User " + usr.Name + " exist."
 	}*/
+
+	rsp.ResponseType = "in_channel"
+	rsp.Text = "In Action baby"
 
 
 	w.Header().Set("Content-Type", "application/json")
