@@ -105,16 +105,12 @@ func (r *slackRsp) composeLogin() {
 		TitleLink:"https://codefresh-io.github.io/cli/authentication",
 		Color:"#11b5a4",
 		Text: "Please run `/codefresh auth create-context`\nLearn more at https://codefresh-io.github.io/cli/getting-started/"}
-	att1 := Attachment{
-		Title:"Codefresh CLI Authentication",
-		TitleLink:"https://codefresh-io.github.io/cli/authentication",
-		Color:"#11b5a4",
-		Text: "Please run `/codefresh auth create-context`\nLearn more at https://codefresh-io.github.io/cli/getting-started/"}
+
 	/*att := Attachment{Title:"How would you like to login", Callback_id: "login", Attachment_type: "default"}
 	att.Actions = []Action{{Name: "login", Text: "Github", Type: "button" ,Value: "github"},
 						   {Name: "login", Text: "Bitbucket", Type: "button" ,Value: "bitbucket"},
 						   {Name: "login", Text: "Gitlab", Type: "button" ,Value: "gitlab"}}*/
-	r.Attachments = []Attachment{att,att1}
+	r.Attachments = []Attachment{att}
 
 	return
 }
