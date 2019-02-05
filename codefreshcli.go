@@ -41,7 +41,7 @@ func (cmd *Cfcmd) RunCmd (rsp *slackRsp) (err error, ok bool){
 			return err, false
 		}
 		fmt.Printf("%s", out)
-		rsp.Text = "*Slackbot version: 0.1\n" + string(out) +"*"
+		rsp.Text = "*Slackbot version: 0.1*\n*" + string(out) +"*"
 	default:
 		rsp.Text = "*" + cmd.command + " is not supported yet. Stay tune.*"
 
