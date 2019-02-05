@@ -42,7 +42,7 @@ func (cmd *Cfcmd) RunCmd (rsp *slackRsp) (err error, ok bool){
 		}
 		re := regexp.MustCompile(`[0-9]*\.[0-9]*\.[0-9]*`)
 		cliVer := re.FindString(string(out))
-		rsp.Text = "*Slackbot version: 0.1*\n*Codefresh CLI version: " + cliVer +"*"
+		rsp.Text = "*Slackbot version: 0.0.1*\n*Codefresh CLI version: " + cliVer +"*"
 	default:
 		rsp.Text = "*" + cmd.command + " is not supported yet. Stay tune.*"
 
