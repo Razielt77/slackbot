@@ -95,7 +95,7 @@ type slackRsp struct {
 }
 
 
-func (r *slackRsp) composeLogin() {
+func (r *slackRsp) composeLoginOld() {
 
 
 	r.ResponseType = "in_channel"
@@ -115,6 +115,27 @@ func (r *slackRsp) composeLogin() {
 	return
 }
 
+func (r *slackRsp) composeLogin() {
+
+
+	r.ResponseType = "in_channel"
+	r.Text = "*hmm...seems like you haven't logged in recently*"
+	att := Attachment{
+		Title:"Fetch your Codefresh's Token",
+		TitleLink:"https://g.codefresh.io/account-admin/account-conf/tokens#autogen=codefresh-slack-bot",
+		Color:"#11b5a4",
+		Callback_id:"enter_token",
+		Text: "Go to your Codefresh's Accounts Settings->Tokens to fetch/create your token."}
+	att.Actions = []Action{{Name: "add-token", Text: "Enter Token", Type: "button",Style:"primary" ,Value: "start"}}
+
+	/*att := Attachment{Title:"How would you like to login", Callback_id: "login", Attachment_type: "default"}
+	att.Actions = []Action{{Name: "login", Text: "Github", Type: "button" ,Value: "github"},
+						   {Name: "login", Text: "Bitbucket", Type: "button" ,Value: "bitbucket"},
+						   {Name: "login", Text: "Gitlab", Type: "button" ,Value: "gitlab"}}*/
+	r.Attachments = []Attachment{att}
+
+	return
+}
 
 func (r *slackRsp) composeLoginScs(a actionMsg) {
 
