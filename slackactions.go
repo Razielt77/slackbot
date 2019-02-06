@@ -8,7 +8,7 @@ import (
 
 type slackAction struct {
 	Name 			string `json:"name"`
-	Type		string `json:"type"`
+	Type			string `json:"type"`
 	Value 			User `json:value`
 }
 
@@ -36,7 +36,7 @@ func (r *slackActionMsg) ExtractAction(req *http.Request, log bool) bool {
 		fmt.Println("error:", err)
 	}
 
-	fmt.Printf("User id: %v\nUser name: %v\nActions len: %v\nAction: %v\nCallbackid: %v\n", r.User.ID, r.User.Name, len(r.Actions),r.Actions[0],r.CallbackId)
+	fmt.Printf("User id: %v\nUser name: %v\nActions len: %v\nAction name: %v\nAction type: %v\nAction value: %v\nCallbackid: %v\n", r.User.ID, r.User.Name, len(r.Actions),r.Actions[0].Name,r.Actions[0].Type,r.Actions[0].Value,r.CallbackId)
 
 	//fmt.Printf("Command received\n %+v\n", req.Form)
 
