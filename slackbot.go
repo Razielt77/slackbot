@@ -88,7 +88,16 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 	err := action.ExtractAction(r, true)
 
 	if err != true {
-		fmt.Println("Cannot parse %s", r.Body)
+		fmt.Printf("Cannot parse %s", r.Body)
+		http.Error(w, "Cannot Parse", 400)
+		return
+	}
+
+	//executing the action
+	err = action.ExecuteAction()
+
+	if err != true {
+		fmt.Printf("Cannot execute %v", action.Actions[0])
 		http.Error(w, "Cannot Parse", 400)
 		return
 	}
