@@ -76,7 +76,7 @@ func main() {
 
 func handleAction(w http.ResponseWriter, r *http.Request) {
 
-	//var cmd actionMsg
+	var action slackAction
 	var rsp slackRsp
 
 	if r.Body == nil {
@@ -85,7 +85,7 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//extracting the command
-	/*err := cmd.extractMsg(r, true)
+	err := action.ExtractAction(r, true)
 
 	if err != true {
 		fmt.Println("Cannot parse %s", r.Body)
@@ -94,7 +94,7 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 
-	rsp.composeLoginScs(cmd)*/
+	//rsp.composeLoginScs(cmd)
 
 	/*usr, ok := users[cmd.User_id]
 
