@@ -9,7 +9,7 @@ import (
 type slackAction struct {
 	Name 			string `json:"name"`
 	Type			string `json:"type"`
-	Value 			User `json:value`
+	Value 			string `json:value`
 }
 
 type slackActionMsg struct {
