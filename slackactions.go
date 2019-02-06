@@ -24,7 +24,7 @@ func (r *slackAction) ExtractAction(req *http.Request, log bool) bool {
 		return false
 	}
 
-	user := req.Form.Get("user")
+	payload := req.Form.Get("payload")
 
 
 	//fmt.Printf("Command received\n %+v\n", req.Form)
@@ -33,11 +33,11 @@ func (r *slackAction) ExtractAction(req *http.Request, log bool) bool {
 	r.CallbackId = req.Form.Get("callback_id")
 
 
-	fmt.Printf("Type: %T Value: %s\n", user, user)
-	fmt.Printf("Type: %T Value: %s\n", r.Type, r.Type)
-	fmt.Printf("Type: %T Value: %s\n", r.CallbackId, r.CallbackId)
+	fmt.Printf("Payload Type: %T Value: %s\n", payload, payload)
+	//fmt.Printf("Type: %T Value: %s\n", r.Type, r.Type)
+	//fmt.Printf("Type: %T Value: %s\n", r.CallbackId, r.CallbackId)
 
-	fmt.Printf("\n\nForm Type: %T Value: %s\n", req.Form, req.Form)
+	//fmt.Printf("\n\nForm Type: %T Value: %s\n", req.Form, req.Form)
 
 
 	/*if log != false {
