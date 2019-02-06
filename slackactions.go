@@ -32,9 +32,12 @@ func (r *slackAction) ExtractAction(req *http.Request, log bool) bool {
 	r.Type = req.Form.Get("type")
 	r.CallbackId = req.Form.Get("callback_id")
 
+
 	fmt.Printf("Type: %T Value: %s\n", user, user)
 	fmt.Printf("Type: %T Value: %s\n", r.Type, r.Type)
 	fmt.Printf("Type: %T Value: %s\n", r.CallbackId, r.CallbackId)
+
+	fmt.Printf("\n\nForm Type: %T Value: %s\n", req.Form, req.Form)
 
 
 	/*if log != false {
