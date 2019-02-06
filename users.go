@@ -3,6 +3,7 @@ package main
 
 
 type User struct {
+	ID	string `json:"id"`
 	Name	string `json:"name"`
 	Token 	string `json:"token"`
 	CfToken string `json:"cf_token"`

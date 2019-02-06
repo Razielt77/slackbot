@@ -76,7 +76,7 @@ func main() {
 
 func handleAction(w http.ResponseWriter, r *http.Request) {
 
-	var action slackAction
+	var action slackActionMsg
 	var rsp slackRsp
 
 	if r.Body == nil {
