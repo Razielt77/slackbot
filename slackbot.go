@@ -9,7 +9,7 @@ import (
 )
 
 
-var access_token = "xoxp-4027524866-4029668165-232304174915-7979c6285f9b4a33580a9f2b160da2a1"
+var access_token = "xoxp-4027524866-4029668165-544352979810-1248b3b9011bf3035eb31be7380a144e"
 
 func handler(w http.ResponseWriter, r *http.Request) {
 
