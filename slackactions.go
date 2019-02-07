@@ -130,6 +130,5 @@ func (r *slackActionMsg) AskToken () bool {
 
 
 
-
 	return true
 }
