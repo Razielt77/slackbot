@@ -102,6 +102,8 @@ func (r *slackActionMsg) AskToken () bool {
 	}
 
 
+	fmt.Printf("Printing Dialog Json: %v", tknDlg)
+
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(bt))
 	req.Header.Set("Authorization", bearer)
 	req.Header.Set("Content-Type", "application/json")
@@ -114,9 +116,10 @@ func (r *slackActionMsg) AskToken () bool {
 		fmt.Println("error:", err)
 	}
 
-	fmt.Printf("Received Response: %v", resp.Body)
 
 	defer resp.Body.Close()
+
+	fmt.Printf("Received Response: %v", resp.Body)
 
 
 	return true
