@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -102,13 +103,11 @@ func (r *slackActionMsg) AskToken () bool {
 	}
 
 
-	fmt.Printf("Printing Dialog Json: %v", tknDlg)
-
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(bt))
 	req.Header.Set("Authorization", bearer)
 	req.Header.Set("Content-Type", "application/json")
 
-	fmt.Printf("Sending Dialog Json: %v", tknDlg)
+	fmt.Printf("Sending Dialog Json: %s\n", tknDlg)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -119,7 +118,17 @@ func (r *slackActionMsg) AskToken () bool {
 
 	defer resp.Body.Close()
 
-	fmt.Printf("Received Response: %v", resp.Body)
+	if resp.StatusCode == http.StatusOK {
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		if err !=nil {
+			bodyString := string(bodyBytes)
+			fmt.Printf("Received Response: Status: %s, Body: %s\n", resp.Status, bodyString)
+		}
+	}else{
+		fmt.Printf("Received Response: Status: %s\n", resp.Status)
+	}
+
+
 
 
 	return true
