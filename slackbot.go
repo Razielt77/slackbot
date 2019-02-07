@@ -6,10 +6,11 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"log"
+	"os"
 )
 
 
-var access_token = "xoxp-4027524866-4029668165-544352979810-1248b3b9011bf3035eb31be7380a144e"
+var access_token string = ""
 
 func handler(w http.ResponseWriter, r *http.Request) {
 
@@ -66,6 +67,16 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	//retrieving the slack web api token from the environment variable
+	access_token = os.Getenv("TOKEN")
+
+	if access_token == "" || access_token == "not_set"{
+		fmt.Printf("WARNING: no access token set value is:%s\n",access_token)
+	} else {
+		fmt.Printf("Token set is:%s\n",access_token)
+
+	}
+
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", handler)
 	router.HandleFunc("/action", handleAction)
