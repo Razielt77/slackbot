@@ -90,7 +90,7 @@ func (r *slackActionMsg) AskToken () bool {
 	var tknDlg cftokenDialogMsg
 	tknDlg.TriggerID = r.TriggerID
 	tknDlg.Dialog.CallbackID = r.CallbackId
-	tknDlg.Dialog.Title = "Enter your Codefresh Token"
+	tknDlg.Dialog.Title = "Your Codefresh Token"
 	tknDlg.Dialog.Elements = []cftokenDialogElement{{Name: "cftoken", Label: "Codefresh Token", Type: "text",Placeholder: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}}
 
 	bearer := "Bearer " + access_token
