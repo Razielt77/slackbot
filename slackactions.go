@@ -32,7 +32,7 @@ func (r *slackActionMsg) ExtractAction(req *http.Request, log bool) bool {
 	}
 
 	payload := req.Form.Get("payload")
-
+	fmt.Printf("received payload %s\n", payload)
 
 	err = json.Unmarshal([]byte(payload), r)
 	if err != nil {
@@ -137,3 +137,6 @@ func (r *slackActionMsg) AskToken () bool {
 
 	return true
 }
+
+
+//func postJSON (url string, )

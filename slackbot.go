@@ -98,9 +98,6 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("received somt %s", r.Body)
-
-
 	//extracting the command
 	err := action.ExtractAction(r, true)
 
