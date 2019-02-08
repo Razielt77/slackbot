@@ -14,10 +14,13 @@ type slackAction struct {
 	Value 			string `json:"value"`
 }
 
+type DialogSubmission interface {}
+
 type slackActionMsg struct {
 	Type 			string `json:"type"`
 	CallbackId		string `json:"callback_id"`
 	User 			User `json:"user"`
+	Submission		DialogSubmission `json:"submission"`
 	Actions			[] slackAction `json:"actions"`
 	TriggerID		string `json:"trigger_id"`
 }
@@ -40,7 +43,8 @@ func (r *slackActionMsg) ExtractAction(req *http.Request, log bool) bool {
 		return false
 	}
 
-	fmt.Printf("User id: %v\nUser name: %v\nActions len: %v\nAction name: %v\nAction type: %v\nAction value: %v\nCallbackid: %v\nTrigger ID: %v\n", r.User.ID, r.User.Name, len(r.Actions),r.Actions[0].Name,r.Actions[0].Type,r.Actions[0].Value,r.CallbackId,r.TriggerID)
+
+	//fmt.Printf("User id: %v\nUser name: %v\nActions len: %v\nAction name: %v\nAction type: %v\nAction value: %v\nCallbackid: %v\nTrigger ID: %v\n", r.User.ID, r.User.Name, len(r.Actions),r.Actions[0].Name,r.Actions[0].Type,r.Actions[0].Value,r.CallbackId,r.TriggerID)
 
 
 	return true
@@ -59,6 +63,46 @@ func (r *slackActionMsg) ExecuteAction () bool {
 		fmt.Printf("Unidentified action %v \n", r.Actions[0].Name)
 	}
 
+	return true
+}
+
+type TokenSubbmission struct {
+	CfToken 	string 	`json:cftoken`
+}
+
+func (r *slackActionMsg) SetToken () bool {
+
+	bt, err := json.Marshal(r.Submission)
+	if err != nil {
+		fmt.Println("error:", err)
+	}else{
+		fmt.Printf("Submission string is %s\n", string(bt))
+	}
+
+	var submission TokenSubbmission
+	err = json.Unmarshal([]byte(bt), &submission)
+	if err != nil {
+		fmt.Println("error:", err)
+	}else{
+		fmt.Printf("token is %s\n", submission.CfToken)
+	}
+
+
+	return true
+}
+
+func (r *slackActionMsg) DialogSubmission () bool {
+
+	switch r.CallbackId {
+	case "enter_token":
+		if r.SetToken() != true {
+			fmt.Println("error asking for token")
+			return false
+		}
+		return true
+	default:
+		fmt.Printf("Unidentified dialog submission %v \n", r.Actions[0].Name)
+	}
 	return true
 }
 

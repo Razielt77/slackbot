@@ -107,8 +107,15 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//executing the action
-	err = action.ExecuteAction()
+
+	switch action.Type {
+	case "interactive_message":
+		//executing the action
+		err = action.ExecuteAction()
+	case "dialog_submission":
+		err = action.DialogSubmission()
+
+	}
 
 	if err != true {
 		fmt.Printf("Cannot execute %v", action.Actions[0])
