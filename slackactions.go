@@ -123,9 +123,11 @@ func (r *slackActionMsg) AskToken () bool {
 
 	if resp.StatusCode == http.StatusOK {
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err !=nil {
+		if err ==nil {
 			bodyString := string(bodyBytes)
 			fmt.Printf("Received Response: Status: %s, Body: %s\n", resp.Status, bodyString)
+		}else{
+			fmt.Println("error:", err)
 		}
 	}else{
 		fmt.Printf("Received Response: Status: %s\n", resp.Status)
