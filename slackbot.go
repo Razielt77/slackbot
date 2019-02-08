@@ -22,6 +22,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Printf("received somt %s", r.Body)
+
     //extracting the command
 	err := cmd.ExtractCmd(r, true)
 
