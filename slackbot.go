@@ -22,7 +22,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("received somt %s", r.Body)
 
     //extracting the command
 	err := cmd.ExtractCmd(r, true)
@@ -82,6 +81,7 @@ func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", handler)
 	router.HandleFunc("/action", handleAction)
+	router.HandleFunc("/action", handleAction)
 	log.Fatal(http.ListenAndServe(":8080", router))
 	//http.HandleFunc("/", handler)
 	//http.ListenAndServe(":8080", nil)
@@ -97,6 +97,9 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Please send a request body", 400)
 		return
 	}
+
+	fmt.Printf("received somt %s", r.Body)
+
 
 	//extracting the command
 	err := action.ExtractAction(r, true)
