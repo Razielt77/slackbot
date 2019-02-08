@@ -1,11 +1,12 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/nlopes/slack"
 	"log"
+	"net/http"
 	"os"
 )
 
@@ -66,6 +67,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(rsp)
 
 }
+	var slackApi *slack.Client
 
 func main() {
 	//retrieving the slack web api token from the environment variable
@@ -77,6 +79,7 @@ func main() {
 		fmt.Printf("Token set is:%s\n",access_token)
 
 	}
+	slackApi = slack.New(access_token)
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", handler)

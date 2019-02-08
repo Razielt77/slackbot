@@ -1,10 +1,9 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"github.com/nlopes/slack"
 	"net/http"
 )
 
@@ -131,7 +130,7 @@ func (r *slackActionMsg) AskToken () bool {
 
 	fmt.Printf("Executing add-token action\n")
 
-	var tknDlg cftokenDialogMsg
+	/*var tknDlg cftokenDialogMsg
 	tknDlg.TriggerID = r.TriggerID
 	tknDlg.Dialog.CallbackID = r.CallbackId
 	tknDlg.Dialog.Title = "Your Codefresh Token"
@@ -145,6 +144,10 @@ func (r *slackActionMsg) AskToken () bool {
 	if err != nil {
 		fmt.Println("error:", err)
 	}
+
+
+
+
 
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(bt))
@@ -175,8 +178,33 @@ func (r *slackActionMsg) AskToken () bool {
 		}
 	}else{
 		fmt.Printf("Received Response: Status: %s\n", resp.Status)
-	}
+	}*/
 
+
+
+	/*type Dialog struct {
+		TriggerID      string          `json:"trigger_id"`      // Required
+		CallbackID     string          `json:"callback_id"`     // Required
+		State          string          `json:"state,omitempty"` // Optional
+		Title          string          `json:"title"`
+		SubmitLabel    string          `json:"submit_label,omitempty"`
+		NotifyOnCancel bool            `json:"notify_on_cancel"`
+		Elements       []DialogElement `json:"elements"`
+	}*/
+
+	textElement := &slack.TextInputElement{}
+	textElement.Type = "text"
+	textElement.Name = "cftoken"
+	textElement.Placeholder = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+	textElement.Label = "Codefresh Token"
+
+	var dlg slack.Dialog
+	dlg.TriggerID = r.TriggerID
+	dlg.CallbackID = r.CallbackId
+	dlg.Title = "Your Codefresh Token"
+	dlg.Elements = []slack.DialogElement{textElement}
+
+	slackApi.OpenDialog(r.TriggerID,dlg)
 
 
 	return true
