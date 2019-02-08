@@ -106,6 +106,7 @@ func (r *slackActionMsg) AskToken () bool {
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(bt))
 	req.Header.Set("Authorization", bearer)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("charset", "utf-8")
 
 	fmt.Printf("Sending Dialog Json: %s\n", string(bt))
 
