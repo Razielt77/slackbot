@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nlopes/slack"
+	"github.com/nlopes/slack/slackevents"
 	"log"
 	"net/http"
 	"os"
@@ -69,6 +71,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 	var slackApi *slack.Client
 
+
 func main() {
 	//retrieving the slack web api token from the environment variable
 	access_token = os.Getenv("TOKEN")
@@ -92,6 +95,21 @@ func main() {
 
 
 func handleAction(w http.ResponseWriter, r *http.Request) {
+
+
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(r.Body)
+	body := buf.String()
+
+	eventsAPIEvent, e := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionVerifyToken(&slackevents.TokenComparator{access_token}))
+	if e != nil {
+		fmt.Printf("Error Parsin %s\n", r.Body)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
+	fmt.Printf("eventsAPIEvent is %s\n", eventsAPIEvent)
+
+
 
 	var action slackActionMsg
 	var rsp slackRsp

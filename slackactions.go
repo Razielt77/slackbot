@@ -13,7 +13,12 @@ type slackAction struct {
 	Value 			string `json:"value"`
 }
 
+
 type DialogSubmission interface {}
+
+type ActionType struct{
+	Type	slack.InteractionType `json:"type"`
+}
 
 type slackActionMsg struct {
 	Type 			string `json:"type"`
@@ -35,6 +40,19 @@ func (r *slackActionMsg) ExtractAction(req *http.Request, log bool) bool {
 
 	payload := req.Form.Get("payload")
 	fmt.Printf("received payload %s\n", payload)
+
+	/*var tp ActionType
+
+	err = json.Unmarshal([]byte(payload), &tp)
+	if err != nil {
+		fmt.Println("error:", err)
+		return false
+	}
+
+	switch tp.Type {
+	case slack.InteractionTypeDialogSubmission:
+
+	}*/
 
 	err = json.Unmarshal([]byte(payload), r)
 	if err != nil {
@@ -87,6 +105,22 @@ func (r *slackActionMsg) SetToken () bool {
 	}
 
 
+	return true
+}
+
+
+func (r *slackActionMsg) DlgSubmission () bool {
+
+	switch r.CallbackId {
+	case "enter_token":
+		if r.SetToken() != true {
+			fmt.Println("error asking for token")
+			return false
+		}
+		return true
+	default:
+		fmt.Printf("Unidentified dialog submission %v \n", r.Actions[0].Name)
+	}
 	return true
 }
 
