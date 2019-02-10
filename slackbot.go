@@ -1,11 +1,11 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/nlopes/slack"
-	"github.com/nlopes/slack/slackevents"
+	"log"
 	"net/http"
 	"os"
 )
@@ -74,50 +74,10 @@ func main() {
 	//retrieving the slack web api token from the environment variable
 	access_token = os.Getenv("TOKEN")
 
-	slackApi = slack.New(access_token)
-	//logger := log.New(os.Stdout, "slack-bot: ", log.Lshortfile|log.LstdFlags)
-	//slack.SetLogger(logger)
-	//api.SetDebug(true)
 
-	rtm := slackApi.NewRTM()
-	go rtm.ManageConnection()
 
-	for msg := range rtm.IncomingEvents {
-		fmt.Print("Event Received: ")
-		switch ev := msg.Data.(type) {
-		case *slack.HelloEvent:
-			// Ignore hello
 
-		case *slack.ConnectedEvent:
-			fmt.Println("Infos:", ev.Info)
-			fmt.Println("Connection counter:", ev.ConnectionCount)
-			// Replace C2147483705 with your Channel ID
-			rtm.SendMessage(rtm.NewOutgoingMessage("Hello world", "C2147483705"))
-
-		case *slack.MessageEvent:
-			fmt.Printf("Message: %v\n", ev)
-
-		case *slack.PresenceChangeEvent:
-			fmt.Printf("Presence Change: %v\n", ev)
-
-		case *slack.LatencyReport:
-			fmt.Printf("Current latency: %v\n", ev.Value)
-
-		case *slack.RTMError:
-			fmt.Printf("Error: %s\n", ev.Error())
-
-		case *slack.InvalidAuthEvent:
-			fmt.Printf("Invalid credentials")
-			return
-
-		default:
-
-			// Ignore other events..
-			// fmt.Printf("Unexpected: %v\n", msg.Data)
-		}
-	}
-
-	/*if access_token == "" || access_token == "not_set"{
+	if access_token == "" || access_token == "not_set"{
 		fmt.Printf("WARNING: no access token set value is:%s\n",access_token)
 	} else {
 		fmt.Printf("Token set is:%s\n",access_token)
@@ -131,25 +91,11 @@ func main() {
 	router.HandleFunc("/action", handleAction)
 	log.Fatal(http.ListenAndServe(":8080", router))
 	//http.HandleFunc("/", handler)
-	//http.ListenAndServe(":8080", nil)*/
+	//http.ListenAndServe(":8080", nil)
 }
 
 
 func handleAction(w http.ResponseWriter, r *http.Request) {
-
-
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(r.Body)
-	body := buf.String()
-
-	eventsAPIEvent, e := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionVerifyToken(&slackevents.TokenComparator{access_token}))
-	if e != nil {
-		fmt.Printf("Error Parsin %s\n", r.Body)
-		w.WriteHeader(http.StatusInternalServerError)
-	}
-
-	fmt.Printf("eventsAPIEvent is %s\n", eventsAPIEvent)
-
 
 
 	var action slackActionMsg

@@ -41,7 +41,7 @@ func (r *slackActionMsg) ExtractAction(req *http.Request, log bool) bool {
 	payload := req.Form.Get("payload")
 	fmt.Printf("received payload %s\n", payload)
 
-	/*var tp ActionType
+	var tp ActionType
 
 	err = json.Unmarshal([]byte(payload), &tp)
 	if err != nil {
@@ -51,8 +51,19 @@ func (r *slackActionMsg) ExtractAction(req *http.Request, log bool) bool {
 
 	switch tp.Type {
 	case slack.InteractionTypeDialogSubmission:
+		intcallback := slack.InteractionCallback{}
+		err = json.Unmarshal([]byte(payload), &intcallback)
+		if err != nil {
+			fmt.Println("error:", err)
+			return false
+		}
+		switch intcallback.CallbackID{
+		case "enter_token":
+			fmt.Printf("token recieved (slack) is%s\n",intcallback.Submission["cftoken"])
+		}
 
-	}*/
+
+	}
 
 	err = json.Unmarshal([]byte(payload), r)
 	if err != nil {
@@ -114,7 +125,7 @@ func (r *slackActionMsg) DlgSubmission () bool {
 	switch r.CallbackId {
 	case "enter_token":
 		if r.SetToken() != true {
-			fmt.Println("error asking for token")
+			fmt.Println("error setting for token")
 			return false
 		}
 		return true
