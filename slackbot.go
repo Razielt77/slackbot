@@ -67,19 +67,19 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(rsp)
 
 }
-	//var slackApi *slack.Client
+	var slackApi *slack.Client
 
 
 func main() {
 	//retrieving the slack web api token from the environment variable
 	access_token = os.Getenv("TOKEN")
 
-	api := slack.New("YOUR TOKEN HERE")
+	slackApi = slack.New("YOUR TOKEN HERE")
 	//logger := log.New(os.Stdout, "slack-bot: ", log.Lshortfile|log.LstdFlags)
 	//slack.SetLogger(logger)
 	//api.SetDebug(true)
 
-	rtm := api.NewRTM()
+	rtm := slackApi.NewRTM()
 	go rtm.ManageConnection()
 
 	for msg := range rtm.IncomingEvents {
