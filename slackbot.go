@@ -74,7 +74,7 @@ func main() {
 	//retrieving the slack web api token from the environment variable
 	access_token = os.Getenv("TOKEN")
 
-	slackApi = slack.New("YOUR TOKEN HERE")
+	slackApi = slack.New(access_token)
 	//logger := log.New(os.Stdout, "slack-bot: ", log.Lshortfile|log.LstdFlags)
 	//slack.SetLogger(logger)
 	//api.SetDebug(true)
