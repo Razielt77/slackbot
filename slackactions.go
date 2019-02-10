@@ -49,21 +49,23 @@ func (r *slackActionMsg) ExtractAction(req *http.Request, log bool) bool {
 		return false
 	}
 
-	switch tp.Type {
+	intcallback := slack.InteractionCallback{}
+	err = json.Unmarshal([]byte(payload), &intcallback)
+	if err != nil {
+		fmt.Println("error:", err)
+		return false
+	}
+
+	switch intcallback.Type {
 	case slack.InteractionTypeDialogSubmission:
-		intcallback := slack.InteractionCallback{}
-		err = json.Unmarshal([]byte(payload), &intcallback)
-		if err != nil {
-			fmt.Println("error:", err)
-			return false
-		}
 		switch intcallback.CallbackID{
 		case "enter_token":
-			fmt.Printf("token recieved (slack) is%s\n",intcallback.Submission["cftoken"])
+			fmt.Printf("token recieved (slack) is: %s\n",intcallback.Submission["cftoken"])
 		}
 
-
-	}
+	case slack.InteractionTypeInteractionMessage:
+			AskToken(&intcallback)
+			}
 
 	err = json.Unmarshal([]byte(payload), r)
 	if err != nil {
@@ -119,37 +121,29 @@ func (r *slackActionMsg) SetToken () bool {
 	return true
 }
 
+func AskToken (callback *slack.InteractionCallback) bool {
 
-func (r *slackActionMsg) DlgSubmission () bool {
 
-	switch r.CallbackId {
-	case "enter_token":
-		if r.SetToken() != true {
-			fmt.Println("error setting for token")
-			return false
-		}
-		return true
-	default:
-		fmt.Printf("Unidentified dialog submission %v \n", r.Actions[0].Name)
-	}
+	fmt.Printf("Executing add-token action\n")
+
+
+	textElement := &slack.TextInputElement{}
+	textElement.Type = "text"
+	textElement.Name = "cftoken"
+	textElement.Placeholder = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+	textElement.Label = "Codefresh Token"
+
+	var dlg slack.Dialog
+	dlg.TriggerID = callback.TriggerID
+	dlg.CallbackID = callback.CallbackID
+	dlg.Title = "Your Codefresh Token"
+	dlg.Elements = []slack.DialogElement{textElement}
+
+	slackApi.OpenDialog(callback.TriggerID,dlg)
+
+
 	return true
 }
-
-func (r *slackActionMsg) DialogSubmission () bool {
-
-	switch r.CallbackId {
-	case "enter_token":
-		if r.SetToken() != true {
-			fmt.Println("error asking for token")
-			return false
-		}
-		return true
-	default:
-		fmt.Printf("Unidentified dialog submission %v \n", r.Actions[0].Name)
-	}
-	return true
-}
-
 
 
 func (r *slackActionMsg) AskToken () bool {
@@ -157,16 +151,6 @@ func (r *slackActionMsg) AskToken () bool {
 
 	fmt.Printf("Executing add-token action\n")
 
-
-	/*type Dialog struct {
-		TriggerID      string          `json:"trigger_id"`      // Required
-		CallbackID     string          `json:"callback_id"`     // Required
-		State          string          `json:"state,omitempty"` // Optional
-		Title          string          `json:"title"`
-		SubmitLabel    string          `json:"submit_label,omitempty"`
-		NotifyOnCancel bool            `json:"notify_on_cancel"`
-		Elements       []DialogElement `json:"elements"`
-	}*/
 
 	textElement := &slack.TextInputElement{}
 	textElement.Type = "text"

@@ -119,9 +119,9 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 	switch action.Type {
 	case "interactive_message":
 		//executing the action
-		err = action.ExecuteAction()
+		//err = action.ExecuteAction()
 	case "dialog_submission":
-		err = action.DialogSubmission()
+		//err = action.DialogSubmission()
 
 	}
 
