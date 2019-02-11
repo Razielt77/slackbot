@@ -120,7 +120,8 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 	rsp.Text = "In Action baby"
 
 
+	//w.WriteHeader(500)
 	w.Header().Set("Content-Type", "application/json")
-	//json.NewEncoder(w).Encode(rsp)
+	json.NewEncoder(w).Encode(rsp)
 
 }

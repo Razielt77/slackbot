@@ -16,9 +16,7 @@ type slackAction struct {
 
 type DialogSubmission interface {}
 
-type ActionType struct{
-	Type	slack.InteractionType `json:"type"`
-}
+
 
 type slackActionMsg struct {
 	Type 			string `json:"type"`
@@ -41,13 +39,6 @@ func (r *slackActionMsg) ExecuteAction(req *http.Request, log bool) bool {
 	payload := req.Form.Get("payload")
 	fmt.Printf("received payload %s\n", payload)
 
-	var tp ActionType
-
-	err = json.Unmarshal([]byte(payload), &tp)
-	if err != nil {
-		fmt.Println("error:", err)
-		return false
-	}
 
 	intcallback := slack.InteractionCallback{}
 	err = json.Unmarshal([]byte(payload), &intcallback)
