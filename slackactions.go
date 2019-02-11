@@ -53,12 +53,8 @@ func (r *slackActionMsg) ExecuteAction(req *http.Request, w http.ResponseWriter,
 		case "enter_token":
 			fmt.Printf("token recieved (slack) is: %s\n",intcallback.Submission["cftoken"])
 			w.WriteHeader(200)
-			channelID, timestamp, err := slackApi.PostMessage(intcallback.Channel.ID, slack.MsgOptionText(intcallback.Submission["cftoken"], false))
-			if err != nil {
-				fmt.Printf("%s\n", err)
-				return false
-			}
-			fmt.Printf("Message successfully sent to channel %s at %s", channelID, timestamp)
+			SetToken(&intcallback)
+
 		}
 
 	case slack.InteractionTypeInteractionMessage:
@@ -79,23 +75,20 @@ type TokenSubbmission struct {
 	CfToken 	string 	`json:cftoken`
 }
 
-func (r *slackActionMsg) SetToken () bool {
+func SetToken (callback *slack.InteractionCallback) bool {
 
-	bt, err := json.Marshal(r.Submission)
+
+	text := "*" + callback.User.Name + ", token submitted successfully!*"
+	att := slack.Attachment{
+		Color:"#11b5a4",
+		Text: ":white_check_mark:Login successful\nLearn more on Codefresh's slack commands at www.codefresh.io"}
+
+	channelID, timestamp, err := slackApi.PostMessage(callback.Channel.ID, slack.MsgOptionText(text, false),slack.MsgOptionAttachments(att))
 	if err != nil {
-		fmt.Println("error:", err)
-	}else{
-		fmt.Printf("Submission string is %s\n", string(bt))
+		fmt.Printf("%s\n", err)
+		return false
 	}
-
-	var submission TokenSubbmission
-	err = json.Unmarshal([]byte(bt), &submission)
-	if err != nil {
-		fmt.Println("error:", err)
-	}else{
-		fmt.Printf("token is %s\n", submission.CfToken)
-	}
-
+	fmt.Printf("Message successfully sent to channel %s at %s", channelID, timestamp)
 
 	return true
 }

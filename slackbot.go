@@ -116,12 +116,6 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 
-	//rsp.ResponseType = "in_channel"
-	//rsp.Text = "In Action baby"
 
-
-	//w.WriteHeader(500)
-	//w.Header().Set("Content-Type", "application/json")
-	//json.NewEncoder(w).Encode(rsp)
 
 }
