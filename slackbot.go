@@ -107,7 +107,7 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//extracting the command
-	err := action.ExecuteAction(r, true)
+	err := action.ExecuteAction(r, w , true)
 
 	if err != true {
 		fmt.Printf("Cannot execute %s", r.Body)
@@ -116,12 +116,12 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 
-	rsp.ResponseType = "in_channel"
-	rsp.Text = "In Action baby"
+	//rsp.ResponseType = "in_channel"
+	//rsp.Text = "In Action baby"
 
 
 	//w.WriteHeader(500)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(rsp)
+	//w.Header().Set("Content-Type", "application/json")
+	//json.NewEncoder(w).Encode(rsp)
 
 }

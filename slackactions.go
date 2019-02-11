@@ -27,7 +27,7 @@ type slackActionMsg struct {
 	TriggerID		string `json:"trigger_id"`
 }
 
-func (r *slackActionMsg) ExecuteAction(req *http.Request, log bool) bool {
+func (r *slackActionMsg) ExecuteAction(req *http.Request, w http.ResponseWriter, log bool) bool {
 
 
 	err := req.ParseForm()
@@ -52,6 +52,7 @@ func (r *slackActionMsg) ExecuteAction(req *http.Request, log bool) bool {
 		switch intcallback.CallbackID{
 		case "enter_token":
 			fmt.Printf("token recieved (slack) is: %s\n",intcallback.Submission["cftoken"])
+			w.WriteHeader(200)
 		}
 
 	case slack.InteractionTypeInteractionMessage:
