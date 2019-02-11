@@ -99,7 +99,7 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 
 
 	var action slackActionMsg
-	var rsp slackRsp
+	//var rsp slackRsp
 
 	if r.Body == nil {
 		http.Error(w, "Please send a request body", 400)
