@@ -27,6 +27,8 @@ type slackActionMsg struct {
 	TriggerID		string `json:"trigger_id"`
 }
 
+var ts string
+
 func (r *slackActionMsg) ExecuteAction(req *http.Request, w http.ResponseWriter, log bool) bool {
 
 
@@ -83,9 +85,13 @@ func SetToken (callback *slack.InteractionCallback) bool {
 		Color:"#11b5a4",
 		Text: "Learn more on Codefresh's slack commands at www.codefresh.io"}
 
-	channelID, timestamp, _, err:= slackApi.UpdateMessage(callback.Channel.ID,callback.ActionTs,slack.MsgOptionText(text, false),slack.MsgOptionTS(callback.ActionTs),slack.MsgOptionAttachments(att))
+	msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
 
-	//channelID, timestamp, err := slackApi.PostMessage(callback.Channel.ID, slack.MsgOptionText(text, false),slack.MsgOptionAttachments(att))
+
+	fmt.Printf("Using ts to: %s\n", ts )
+	channelID, timestamp, _, err:= slackApi.UpdateMessage(callback.Channel.ID,ts,slack.MsgOptionText(text, false),slack.MsgOptionTS(callback.ActionTs),slack.MsgOptionAttachments(att),slack.MsgOptionUpdate(ts))
+
+	//channelID, timestamp, err := slackApi.PostMessage(callback.Channel.ID, slack.MsgOptionText(text, false),slack.MsgOptionAttachments(att),slack.MsgOption)
 	if err != nil {
 		fmt.Printf("%s\n", err)
 		return false
@@ -111,6 +117,9 @@ func AskToken (callback *slack.InteractionCallback) bool {
 	dlg.CallbackID = callback.CallbackID
 	dlg.Title = "Your Codefresh Token"
 	dlg.Elements = []slack.DialogElement{textElement}
+
+	ts = callback.ActionTs
+	fmt.Printf("Setting ts to: %s\n", ts )
 
 	slackApi.OpenDialog(callback.TriggerID,dlg)
 
