@@ -53,6 +53,12 @@ func (r *slackActionMsg) ExecuteAction(req *http.Request, w http.ResponseWriter,
 		case "enter_token":
 			fmt.Printf("token recieved (slack) is: %s\n",intcallback.Submission["cftoken"])
 			w.WriteHeader(200)
+			channelID, timestamp, err := slackApi.PostMessage(intcallback.Channel.ID, slack.MsgOptionText(intcallback.Submission["cftoken"], false))
+			if err != nil {
+				fmt.Printf("%s\n", err)
+				return false
+			}
+			fmt.Printf("Message successfully sent to channel %s at %s", channelID, timestamp)
 		}
 
 	case slack.InteractionTypeInteractionMessage:
