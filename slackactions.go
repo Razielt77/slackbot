@@ -61,6 +61,9 @@ func (r *slackActionMsg) ExecuteAction(req *http.Request, w http.ResponseWriter,
 
 	case slack.InteractionTypeInteractionMessage:
 			AskToken(&intcallback)
+			rsp := slackRsp{ResponseType:"in_channel",Text:"In Action baby"}
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(rsp)
 			}
 
 	err = json.Unmarshal([]byte(payload), r)
@@ -89,9 +92,9 @@ func SetToken (callback *slack.InteractionCallback) bool {
 
 
 	fmt.Printf("Using ts to: %s\n", ts )
-	channelID, timestamp, _, err:= slackApi.UpdateMessage(callback.Channel.ID,ts,slack.MsgOptionText(text, false),slack.MsgOptionTS(callback.ActionTs),slack.MsgOptionAttachments(att),slack.MsgOptionUpdate(ts))
+	//channelID, timestamp, _, err:= slackApi.UpdateMessage(callback.Channel.ID,ts,slack.MsgOptionText(text, false),slack.MsgOptionTS(callback.ActionTs),slack.MsgOptionAttachments(att),slack.MsgOptionUpdate(ts))
 
-	//channelID, timestamp, err := slackApi.PostMessage(callback.Channel.ID, slack.MsgOptionText(text, false),slack.MsgOptionAttachments(att),slack.MsgOption)
+	channelID, timestamp, err := slackApi.PostMessage(callback.Channel.ID, slack.MsgOptionText(text, false),slack.MsgOptionAttachments(att))
 	if err != nil {
 		fmt.Printf("%s\n", err)
 		return false
