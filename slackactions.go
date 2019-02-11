@@ -83,7 +83,7 @@ func SetToken (callback *slack.InteractionCallback) bool {
 		Color:"#11b5a4",
 		Text: "Learn more on Codefresh's slack commands at www.codefresh.io"}
 
-	channelID, timestamp, _, err:= slackApi.UpdateMessage(callback.Channel.ID,callback.ActionTs,slack.MsgOptionText(text, false),slack.MsgOptionAttachments(att))
+	channelID, timestamp, _, err:= slackApi.UpdateMessage(callback.Channel.ID,callback.ActionTs,slack.MsgOptionText(text, false),slack.MsgOptionTS(callback.ActionTs),slack.MsgOptionAttachments(att))
 
 	//channelID, timestamp, err := slackApi.PostMessage(callback.Channel.ID, slack.MsgOptionText(text, false),slack.MsgOptionAttachments(att))
 	if err != nil {
