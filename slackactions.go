@@ -85,7 +85,7 @@ func SetToken (callback *slack.InteractionCallback) bool {
 		Color:"#11b5a4",
 		Text: "Learn more on Codefresh's slack commands at www.codefresh.io"}
 
-	msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
+	//msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
 
 
 	fmt.Printf("Using ts to: %s\n", ts )
