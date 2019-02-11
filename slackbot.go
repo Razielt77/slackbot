@@ -107,41 +107,14 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//extracting the command
-	err := action.ExtractAction(r, true)
+	err := action.ExecuteAction(r, true)
 
 	if err != true {
-		fmt.Printf("Cannot parse %s", r.Body)
+		fmt.Printf("Cannot execute %s", r.Body)
 		http.Error(w, "Cannot Parse", 400)
 		return
 	}
 
-
-	switch action.Type {
-	case "interactive_message":
-		//executing the action
-		//err = action.ExecuteAction()
-	case "dialog_submission":
-		//err = action.DialogSubmission()
-
-	}
-
-	if err != true {
-		fmt.Printf("Cannot execute %v", action.Actions[0])
-		http.Error(w, "Cannot Parse", 400)
-		return
-	}
-
-
-	//rsp.composeLoginScs(cmd)
-
-	/*usr, ok := users[cmd.User_id]
-
-	if !ok {
-		rsp.composeLogin()
-		//users[cmd.User_id] = User{Name:cmd.User_name}
-	}else{
-		rsp.Text = "User " + usr.Name + " exist."
-	}*/
 
 	rsp.ResponseType = "in_channel"
 	rsp.Text = "In Action baby"

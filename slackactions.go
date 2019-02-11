@@ -29,7 +29,7 @@ type slackActionMsg struct {
 	TriggerID		string `json:"trigger_id"`
 }
 
-func (r *slackActionMsg) ExtractAction(req *http.Request, log bool) bool {
+func (r *slackActionMsg) ExecuteAction(req *http.Request, log bool) bool {
 
 
 	err := req.ParseForm()
@@ -74,25 +74,6 @@ func (r *slackActionMsg) ExtractAction(req *http.Request, log bool) bool {
 	}
 
 
-	//fmt.Printf("User id: %v\nUser name: %v\nActions len: %v\nAction name: %v\nAction type: %v\nAction value: %v\nCallbackid: %v\nTrigger ID: %v\n", r.User.ID, r.User.Name, len(r.Actions),r.Actions[0].Name,r.Actions[0].Type,r.Actions[0].Value,r.CallbackId,r.TriggerID)
-
-
-	return true
-}
-
-func (r *slackActionMsg) ExecuteAction () bool {
-
-	switch r.Actions[0].Name {
-	case "add-token":
-		if r.AskToken() != true {
-			fmt.Println("error asking for token")
-			return false
-		}
-		return true
-	default:
-		fmt.Printf("Unidentified action %v \n", r.Actions[0].Name)
-	}
-
 	return true
 }
 
@@ -126,7 +107,6 @@ func AskToken (callback *slack.InteractionCallback) bool {
 
 	fmt.Printf("Executing add-token action\n")
 
-
 	textElement := &slack.TextInputElement{}
 	textElement.Type = "text"
 	textElement.Name = "cftoken"
@@ -144,31 +124,5 @@ func AskToken (callback *slack.InteractionCallback) bool {
 
 	return true
 }
-
-
-func (r *slackActionMsg) AskToken () bool {
-
-
-	fmt.Printf("Executing add-token action\n")
-
-
-	textElement := &slack.TextInputElement{}
-	textElement.Type = "text"
-	textElement.Name = "cftoken"
-	textElement.Placeholder = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-	textElement.Label = "Codefresh Token"
-
-	var dlg slack.Dialog
-	dlg.TriggerID = r.TriggerID
-	dlg.CallbackID = r.CallbackId
-	dlg.Title = "Your Codefresh Token"
-	dlg.Elements = []slack.DialogElement{textElement}
-
-	slackApi.OpenDialog(r.TriggerID,dlg)
-
-
-	return true
-}
-
 
 //func postJSON (url string, )
