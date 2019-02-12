@@ -69,13 +69,9 @@ func (r *slackActionMsg) ExecuteAction(req *http.Request, w http.ResponseWriter,
 	case slack.InteractionTypeInteractionMessage:
 			AskToken(&intcallback)
 
-			rsp1 := slackRsp{ResponseType:"ephemeral",Text:"Prompting token dialog..."}
 			rsp := slackevents.MessageActionResponse{ResponseType:"ephemeral",ReplaceOriginal:true,Text:"Prompting token dialog..."}
 
-			fmt.Printf("rsp = %v\nmsg = %v\n",rsp1,rsp)
 
-
-			//msg := slack.Msg{ResponseType:"ephemeral",Text:"Prompting token dialog..."}
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(rsp)
 			}

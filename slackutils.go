@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/nlopes/slack"
 	"net/http"
@@ -68,33 +67,6 @@ func (r *slackCmd) LoginRequired() bool {
 }
 
 
-/*type Action struct {
-	Name 	string `json:"name"`
-	Text 	string `json:"text"`
-	Type 	string `json:"type"`
-	Value 	string `json:"value"`
-	Style 	string `json:"style"`
-}
-
-type Attachment struct {
-	Title 				string `json:"title"`
-	Color 				string `json:"color"`
-	TitleLink 			string `json:"title_link"`
-	Callback_id 		string `json:"callback_id"`
-	Attachment_type 	string `json:"attachment_type"`
-	Actions 			[] Action `json:"actions"`
-	Text 				string	`json:"text"`
-}*/
-
-
-
-
-/*type slackRsp struct {
-	ResponseType string `json:"response_type"`
-	Text		string `json:"text"`
-	Attachments []slack.Attachment `json:"attachments"`
-}*/
-
 
 func composeLogin(msg *slack.Msg) {
 
@@ -114,17 +86,9 @@ func composeLogin(msg *slack.Msg) {
 	return
 }
 
-/*func (r *slackRsp) composeLoginScs(a actionMsg) {
-
-	txt :=":white_check_mark: <@" + a.User.Id + "|" + a.User.Name + "> you are now logged in"
-
-	att := Attachment{Text: txt, Callback_id: "login", Attachment_type: "default"}
-	r.Attachments = []Attachment{att}
-	return
-}*/
 
 
-type actionMsg struct{
+/*type actionMsg struct{
 	Actions []struct {
 						Name string		`json:"name"`
 						Value string 	`json:"value"`
@@ -180,7 +144,7 @@ func (a *actionMsg) extractMsg (req *http.Request, log bool) bool {
 
 
 	return true
-}
+}*/
 
 
 
