@@ -29,6 +29,12 @@ type slackActionMsg struct {
 
 var ts string
 
+type slackRsp struct {
+	ResponseType string `json:"response_type"`
+	Text		string `json:"text"`
+	Attachments []slack.Attachment `json:"attachments"`
+}
+
 func (r *slackActionMsg) ExecuteAction(req *http.Request, w http.ResponseWriter, log bool) bool {
 
 
@@ -61,9 +67,13 @@ func (r *slackActionMsg) ExecuteAction(req *http.Request, w http.ResponseWriter,
 
 	case slack.InteractionTypeInteractionMessage:
 			AskToken(&intcallback)
-			msg := slack.Msg{ResponseType:"ephemeral",Text:"Prompting token dialog..."}
+
+			rsp := slackRsp{ResponseType:"ephemeral",Text:"Prompting token dialog..."}
+
+
+			//msg := slack.Msg{ResponseType:"ephemeral",Text:"Prompting token dialog..."}
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(msg)
+			json.NewEncoder(w).Encode(rsp)
 			}
 
 	err = json.Unmarshal([]byte(payload), r)
