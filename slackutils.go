@@ -89,11 +89,11 @@ type Attachment struct {
 
 
 
-type slackRsp struct {
+/*type slackRsp struct {
 	ResponseType string `json:"response_type"`
 	Text		string `json:"text"`
 	Attachments []slack.Attachment `json:"attachments"`
-}
+}*/
 
 
 func composeLogin(msg *slack.Msg) {

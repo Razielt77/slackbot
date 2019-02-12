@@ -16,7 +16,7 @@ var access_token string = ""
 func handler(w http.ResponseWriter, r *http.Request) {
 
 	var cmd slackCmd
-	var rsp slackRsp
+	//var rsp slackRsp
 
 	if r.Body == nil {
 		http.Error(w, "Please send a request body", 400)
@@ -28,7 +28,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	err := cmd.ExtractCmd(r, true)
 
 	if err != true {
-		fmt.Println("Cannot parse %s", r.Body)
+		fmt.Println("Cannot parse %s\n", r.Body)
 		http.Error(w, "Cannot Parse", 400)
 		return
 	}
@@ -45,27 +45,27 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(msg)
 			return
 		}
-		fmt.Println("User %s run command %s", usr.Name, cmd.Text)
+		fmt.Println("User %s run command %s\n", usr.Name, cmd.Text)
 
 	}
 
 	var clicmd Cfcmd
 	if clicmd.ConstructCmd(cmd.Text){
 
-		err, ok := clicmd.RunCmd(&rsp)
+		err, ok := clicmd.RunCmd(&msg)
 		if !ok{
-			rsp.Text = "Error executing command err: " + err.Error()
+			msg.Text = "Error executing command err: " + err.Error()
 		}
 	}else{
-		rsp.Text = "Bad command " + cmd.Text
+		msg.Text = "Bad command " + cmd.Text
 	}
 
 
 
-	rsp.ResponseType = "in_channel"
+	msg.ResponseType = "in_channel"
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(rsp)
+	json.NewEncoder(w).Encode(msg)
 
 }
 	var slackApi *slack.Client

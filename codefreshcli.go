@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/nlopes/slack"
 	"log"
 	"os/exec"
 	"regexp"
@@ -31,7 +32,7 @@ func (cmd *Cfcmd) ConstructCmd (str string) bool {
 	return true
 }
 
-func (cmd *Cfcmd) RunCmd (rsp *slackRsp) (err error, ok bool){
+func (cmd *Cfcmd) RunCmd (rsp *slack.Msg) (err error, ok bool){
 	var out []byte
 	switch cmd.command {
 	case "version":
