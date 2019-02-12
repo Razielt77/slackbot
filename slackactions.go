@@ -61,7 +61,7 @@ func (r *slackActionMsg) ExecuteAction(req *http.Request, w http.ResponseWriter,
 
 	case slack.InteractionTypeInteractionMessage:
 			AskToken(&intcallback)
-			rsp := slackRsp{ResponseType:"in_channel",Text:"In Action baby"}
+			rsp := slackRsp{ResponseType:"ephemeral",Text:"Prompting token dialog..."}
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(rsp)
 			}
@@ -74,10 +74,6 @@ func (r *slackActionMsg) ExecuteAction(req *http.Request, w http.ResponseWriter,
 
 
 	return true
-}
-
-type TokenSubbmission struct {
-	CfToken 	string 	`json:cftoken`
 }
 
 func SetToken (callback *slack.InteractionCallback) bool {

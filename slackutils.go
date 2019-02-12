@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/nlopes/slack"
 	"net/http"
 )
 
@@ -67,7 +68,7 @@ func (r *slackCmd) LoginRequired() bool {
 }
 
 
-type Action struct {
+/*type Action struct {
 	Name 	string `json:"name"`
 	Text 	string `json:"text"`
 	Type 	string `json:"type"`
@@ -83,68 +84,44 @@ type Attachment struct {
 	Attachment_type 	string `json:"attachment_type"`
 	Actions 			[] Action `json:"actions"`
 	Text 				string	`json:"text"`
-}
+}*/
 
 
 
 
 type slackRsp struct {
-	ResponseType string `json:"response_type""`
+	ResponseType string `json:"response_type"`
 	Text		string `json:"text"`
-	Attachments []Attachment `json:"attachments"`
+	Attachments []slack.Attachment `json:"attachments"`
 }
 
 
-func (r *slackRsp) composeLoginOld() {
+func composeLogin(msg *slack.Msg) {
 
 
-	r.ResponseType = "in_channel"
-	r.Text = "*hmm...seems like you haven't logged in recently*"
-	att := Attachment{
-		Title:"Codefresh CLI Authentication",
-		TitleLink:"https://codefresh-io.github.io/cli/authentication",
-		Color:"#11b5a4",
-		Text: "Please run `/codefresh auth create-context`\nLearn more at https://codefresh-io.github.io/cli/getting-started/"}
-
-	/*att := Attachment{Title:"How would you like to login", Callback_id: "login", Attachment_type: "default"}
-	att.Actions = []Action{{Name: "login", Text: "Github", Type: "button" ,Value: "github"},
-						   {Name: "login", Text: "Bitbucket", Type: "button" ,Value: "bitbucket"},
-						   {Name: "login", Text: "Gitlab", Type: "button" ,Value: "gitlab"}}*/
-	r.Attachments = []Attachment{att}
-
-	return
-}
-
-func (r *slackRsp) composeLogin() {
-
-
-	r.ResponseType = "in_channel"
-	r.Text = "*hmm...seems like you haven't logged in recently*"
-	att := Attachment{
+	msg.ResponseType = "ephemeral"
+	msg.Text = "*hmm...seems like you haven't logged in recently*"
+	att := slack.Attachment{
 		Title:"Fetch your Codefresh's Token",
 		TitleLink:"https://g.codefresh.io/account-admin/account-conf/tokens#autogen=codefresh-slack-bot",
 		Color:"#11b5a4",
-		Callback_id:"enter_token",
+		CallbackID:"enter_token",
 		Text: "Go to your Codefresh's Accounts Settings->Tokens to fetch/create your token."}
-	att.Actions = []Action{{Name: "add-token", Text: "Enter Token", Type: "button",Style:"primary" ,Value: "start"}}
+	att.Actions = []slack.AttachmentAction{{Name: "add-token", Text: "Enter Token", Type: "button",Style:"primary" ,Value: "start"}}
 
-	/*att := Attachment{Title:"How would you like to login", Callback_id: "login", Attachment_type: "default"}
-	att.Actions = []Action{{Name: "login", Text: "Github", Type: "button" ,Value: "github"},
-						   {Name: "login", Text: "Bitbucket", Type: "button" ,Value: "bitbucket"},
-						   {Name: "login", Text: "Gitlab", Type: "button" ,Value: "gitlab"}}*/
-	r.Attachments = []Attachment{att}
+	msg.Attachments = []slack.Attachment{att}
 
 	return
 }
 
-func (r *slackRsp) composeLoginScs(a actionMsg) {
+/*func (r *slackRsp) composeLoginScs(a actionMsg) {
 
 	txt :=":white_check_mark: <@" + a.User.Id + "|" + a.User.Name + "> you are now logged in"
 
 	att := Attachment{Text: txt, Callback_id: "login", Attachment_type: "default"}
 	r.Attachments = []Attachment{att}
 	return
-}
+}*/
 
 
 type actionMsg struct{

@@ -33,15 +33,16 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	msg := slack.Msg{}
 	//if command require login than check if user logged in (have a context) if not it asks him/her to login
 	if cmd.LoginRequired() {
 		usr, ok := users[cmd.User_id]
 
 		if !ok {
-			rsp.composeLogin()
+			composeLogin(&msg)
 			//users[cmd.User_id] = User{Name:cmd.User_name}
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(rsp)
+			json.NewEncoder(w).Encode(msg)
 			return
 		}
 		fmt.Println("User %s run command %s", usr.Name, cmd.Text)
