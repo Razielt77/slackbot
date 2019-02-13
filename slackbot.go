@@ -83,26 +83,23 @@ func main() {
 		mongo_url = "mongodb://localhost:27017"
 	} else {
 		mongo_url = "mongodb://" + mongo_url + ":27017"
-
-
+	}
 
 	fmt.Printf("Welcome to Codefresh Slackbot\n")
 
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	_, err := mongo.Connect(ctx, "mongodb://localhost:27017")
 
-	if err!=nil{
+	if err != nil {
 		fmt.Println(err)
-	}else{
+	} else {
 		fmt.Printf("Mongo Connection Successful!\n")
 	}
 
-
-
-	if access_token == "" || access_token == "not_set"{
-		fmt.Printf("WARNING: no access token set value is:%s\n",access_token)
+	if access_token == "" || access_token == "not_set" {
+		fmt.Printf("WARNING: no access token set value is:%s\n", access_token)
 	} else {
-		fmt.Printf("Token set is:%s\n",access_token)
+		fmt.Printf("Token set is:%s\n", access_token)
 
 	}
 	slackApi = slack.New(access_token)
@@ -114,7 +111,6 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", router))
 
 }
-
 
 func handleAction(w http.ResponseWriter, r *http.Request) {
 
