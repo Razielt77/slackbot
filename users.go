@@ -5,8 +5,13 @@ package main
 type User struct {
 	ID	string `json:"id"`
 	Name	string `json:"name"`
-	Token 	string `json:"token"`
-	CfToken string `json:"cf_token"`
+	Team 	string `json:"team"`
+	CFTokens []CodefreshToken `json:"cftokens"`
+}
+
+type CodefreshToken struct {
+	AccountName 	string `json:"accountname"`
+	Token 			string 	`json:"token"`
 }
 
 

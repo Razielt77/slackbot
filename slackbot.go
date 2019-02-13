@@ -1,13 +1,16 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/nlopes/slack"
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 
@@ -74,7 +77,25 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	//retrieving the slack web api token from the environment variable
 	access_token = os.Getenv("TOKEN")
+	mongo_url := os.Getenv("MONGO")
 
+	if mongo_url == "" {
+		mongo_url = "mongodb://localhost:27017"
+	} else {
+		mongo_url = "mongodb://" + mongo_url + ":27017"
+
+
+
+	fmt.Printf("Welcome to Codefresh Slackbot\n")
+
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	_, err := mongo.Connect(ctx, "mongodb://localhost:27017")
+
+	if err!=nil{
+		fmt.Println(err)
+	}else{
+		fmt.Printf("Mongo Connection Successful!\n")
+	}
 
 
 
@@ -91,8 +112,7 @@ func main() {
 	router.HandleFunc("/action", handleAction)
 	router.HandleFunc("/action", handleAction)
 	log.Fatal(http.ListenAndServe(":8080", router))
-	//http.HandleFunc("/", handler)
-	//http.ListenAndServe(":8080", nil)
+
 }
 
 
