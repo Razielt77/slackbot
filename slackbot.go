@@ -72,12 +72,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 }
 	var slackApi *slack.Client
+	var mongoClient *mongo.Client
 
 
 func main() {
 	//retrieving the slack web api token from the environment variable
 	access_token = os.Getenv("TOKEN")
 	mongo_url := os.Getenv("MONGO")
+	var err error
 
 	if mongo_url == "" {
 		mongo_url = "mongodb://localhost:27017"
@@ -88,7 +90,7 @@ func main() {
 	fmt.Printf("Welcome to Codefresh Slackbot\n")
 
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_, err := mongo.Connect(ctx, "mongodb://localhost:27017")
+	mongoClient, err = mongo.Connect(ctx, mongo_url)
 
 	if err != nil {
 		fmt.Println(err)
