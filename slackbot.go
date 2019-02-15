@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nlopes/slack"
-	"gopkg.in/mgo.v2"
 	"log"
 	"net/http"
 	"os"
@@ -86,7 +85,7 @@ func main() {
 	}
 
 	fmt.Printf("connecto to %s\n",mongo_url)
-	session, err := mgo.Dial(mongo_url)
+	/*session, err := mgo.Dial(mongo_url)
 	if err != nil {
 		panic(err)
 	}
@@ -94,7 +93,7 @@ func main() {
 
 	session.SetMode(mgo.Monotonic, true)
 
-	ensureIndex(session)
+	ensureIndex(session)*.
 
 	/*user := User{TeamID:"2",UserID:"1",Name:"Raziel",Team:"Codefresh",CFTokens:[]CodefreshToken{{AccountName:`Codefresh-inc`, Token:`1111`},{AccountName:`Razielt77`,Token:`2222`}}}
 
