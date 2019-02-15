@@ -1,18 +1,17 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/nlopes/slack"
+	"gopkg.in/mgo.v2"
 	"log"
 	"net/http"
 	"os"
-	"time"
 )
 
+const NOT_FOUND = "not found"
 
 var access_token string = ""
 
@@ -72,31 +71,53 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 }
 	var slackApi *slack.Client
-	var mongoClient *mongo.Client
 
 
 func main() {
-	//retrieving the slack web api token from the environment variable
-	access_token = os.Getenv("TOKEN")
-	mongo_url := os.Getenv("MONGO")
-	var err error
-
-	if mongo_url == "" {
-		mongo_url = "mongodb://localhost:27017"
-	} else {
-		mongo_url = "mongodb://" + mongo_url + ":27017"
-	}
 
 	fmt.Printf("Welcome to Codefresh Slackbot\n")
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	mongoClient, err = mongo.Connect(ctx, mongo_url)
+	//retrieving the slack web api token from the environment variable
+	access_token = os.Getenv("TOKEN")
+	mongo_url := os.Getenv("MONGO")
 
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Printf("Mongo Connection Successful!\n")
+	if mongo_url =="" {
+		mongo_url = "localhost"
 	}
+
+	fmt.Printf("connecto to %s\n",mongo_url)
+	session, err := mgo.Dial(mongo_url)
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+
+	session.SetMode(mgo.Monotonic, true)
+
+	ensureIndex(session)
+
+	/*user := User{TeamID:"2",UserID:"1",Name:"Raziel",Team:"Codefresh",CFTokens:[]CodefreshToken{{AccountName:`Codefresh-inc`, Token:`1111`},{AccountName:`Razielt77`,Token:`2222`}}}
+
+	AddUser(session,&user)
+
+	user2, err := GetUser(session,"2", "1")
+
+	//fmt.Println(err)
+	if user2 == nil{
+		if err.Error() == NOT_FOUND {
+			fmt.Printf("User not found\n")
+		}else{
+			fmt.Printf("Database Error: %s\n", err)
+		}
+
+	}else{
+		fmt.Printf("User Found\nName: %v\n",user2.Name)
+		for _, s := range user2.CFTokens{
+			fmt.Printf("Account Name: %v\n",s.AccountName)
+		}
+	}*/
+
+
 
 	if access_token == "" || access_token == "not_set" {
 		fmt.Printf("WARNING: no access token set value is:%s\n", access_token)
