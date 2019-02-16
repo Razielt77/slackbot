@@ -22,8 +22,9 @@ type User struct {
 }
 
 type CodefreshToken struct {
-	AccountName 	string `json:"accountname"`
+	AccountName 	string 	`json:"accountname"`
 	Token 			string 	`json:"token"`
+	Active			bool 	`json:"active"`
 }
 
 func ensureIndex(s *mgo.Session) {
@@ -88,7 +89,7 @@ func GetUser(s *mgo.Session,teamid string, userid string) (*User, error) {
 	err := c.Find(bson.M{"teamid":teamid,"userid": userid}).One(user)
 
 	if err != nil{
-		if err.Error() == NOT_FOUND{
+		if err == mgo.ErrNotFound{
 			fmt.Printf("User not found\n")
 		}else{
 			fmt.Printf("Failed find user: Database error:%d\n",err)
@@ -99,5 +100,30 @@ func GetUser(s *mgo.Session,teamid string, userid string) (*User, error) {
 	return user,err
 
 }
+
+
+func UpdateUser(s *mgo.Session, user *User) error {
+
+		session := s.Copy()
+		defer session.Close()
+
+		c := GetCollection(session)
+
+		err := c.Update(bson.M{"teamid": user.TeamID,"userid":user.UserID}, user)
+		if err != nil {
+			switch err {
+			case mgo.ErrNotFound:
+				fmt.Printf( "User not found. User Name: %s\n", user.Name)
+				return err
+			default:
+				fmt.Printf( "Database error: %s\n", user.Name)
+				return err
+			}
+		}
+
+		return err
+
+}
+
 
 var users = make(map[string]User)

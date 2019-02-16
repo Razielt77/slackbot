@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/nlopes/slack"
 	"github.com/nlopes/slack/slackevents"
+	"gopkg.in/mgo.v2"
 	"net/http"
 )
 
@@ -36,7 +37,7 @@ type slackRsp struct {
 	Attachments []slack.Attachment `json:"attachments"`
 }
 
-func (r *slackActionMsg) ExecuteAction(req *http.Request, w http.ResponseWriter, log bool) bool {
+func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, w http.ResponseWriter, log bool) bool {
 
 
 	err := req.ParseForm()
@@ -62,7 +63,7 @@ func (r *slackActionMsg) ExecuteAction(req *http.Request, w http.ResponseWriter,
 		case "enter_token":
 			fmt.Printf("token recieved (slack) is: %s\n",intcallback.Submission["cftoken"])
 			w.WriteHeader(200)
-			SetToken(&intcallback)
+			SetToken(s, &intcallback)
 
 		}
 
@@ -86,8 +87,18 @@ func (r *slackActionMsg) ExecuteAction(req *http.Request, w http.ResponseWriter,
 	return true
 }
 
-func SetToken (callback *slack.InteractionCallback) bool {
+func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 
+	//user := User{TeamID:callback.Team.ID,UserID:callback.User.ID,Name:callback.User.Name,Team:callback.Team.Name}
+	session := s.Copy()
+	defer session.Close()
+
+	user, _ := GetUser(session,callback.Team.ID,callback.User.ID)
+
+	if user == nil{
+		user = &User{TeamID:callback.Team.ID,UserID:callback.User.ID,Name:callback.User.Name,Team:callback.Team.Name,CFTokens:[]CodefreshToken{{AccountName:"Codefresh",Token:callback.Submission["cftoken"],Active:true}}}
+		AddUser(session,user)
+	}
 
 	text := ":white_check_mark: *Token submitted!*"
 	att := slack.Attachment{
