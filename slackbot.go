@@ -3,8 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/nlopes/slack"
 	"gopkg.in/mgo.v2"
+	"log"
 	"net/http"
 	"os"
 )
@@ -85,7 +87,7 @@ func main() {
 		}
 	}
 
-	/*if access_token == "" || access_token == "not_set" {
+	if access_token == "" || access_token == "not_set" {
 		fmt.Printf("WARNING: no access token set value is:%s\n", access_token)
 	} else {
 		fmt.Printf("Token set is:%s\n", access_token)
@@ -98,7 +100,7 @@ func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", Handler(session))
 	router.HandleFunc("/action", HandleAction(session))
-	log.Fatal(http.ListenAndServe(":8080", router))*/
+	log.Fatal(http.ListenAndServe(":8080", router))
 
 }
 
