@@ -168,7 +168,7 @@ func Handler(s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 				json.NewEncoder(w).Encode(msg)
 				return
 			}
-			fmt.Println("User %s run command %s\n", usr.Name, cmd.Text)
+			fmt.Printf("User %s run command %s\n", usr.Name, cmd.Text)
 		}
 
 		/*var clicmd Cfcmd
