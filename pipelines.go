@@ -1,6 +1,13 @@
 package main
 
-/*func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
+import (
+	"encoding/json"
+	"github.com/Razielt77/cf-webapi-go"
+	"github.com/nlopes/slack"
+	"time"
+)
+
+func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 	var attarr []slack.Attachment
 	for _, pipeline := range p_arr {
 		p_att := &slack.Attachment{
@@ -15,10 +22,16 @@ package main
 				panic(err)
 			}
 			p_att.Ts = json.Number(t.Unix())
+			switch pipeline.LastWorkflow.Status{
+			case "success":
+				p_att.FooterIcon = `https://raw.githubusercontent.com/Razielt77/slackbot/master/img/passed.png`
+			case "error":
+				p_att.FooterIcon = `https://raw.githubusercontent.com/Razielt77/slackbot/master/img/failed.png`
+			}
 		}
 
 		//status := slack.AttachmentField{}
 		//attarr = append(attarr, p_att)
 	}
 	return attarr
-}*/
+}
