@@ -3,12 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Razielt77/cf-webapi-go"
 	"github.com/gorilla/mux"
 	"github.com/nlopes/slack"
 	"gopkg.in/mgo.v2"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 const NOT_FOUND = "not found"
@@ -51,13 +53,12 @@ func main() {
 
 	ensureIndex(session)
 
-	user := User{TeamID:"2",UserID:"1",Name:"Raziel",Team:"Codefresh",CFTokens:[]CodefreshToken{{AccountName:`Codefresh-inc`, Token:`1111`},{AccountName:`Razielt77`,Token:`2222`}}}
+	/*user := User{TeamID:"2",UserID:"1",Name:"Raziel",Team:"Codefresh",CFTokens:[]CodefreshToken{{AccountName:`Codefresh-inc`, Token:`1111`},{AccountName:`Razielt77`,Token:`2222`}}}
 
 	AddUser(session,&user)
 
 	user2, err := GetUser(session,"2", "1")
 
-	//fmt.Println(err)
 	if user2 == nil{
 		if err.Error() == NOT_FOUND {
 			fmt.Printf("User not found\n")
@@ -98,7 +99,7 @@ func main() {
 	} else {
 		fmt.Printf("Token set is:%s\n", access_token)
 
-	}
+	}*/
 
 
 	slackApi = slack.New(access_token)
@@ -106,6 +107,7 @@ func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", Handler(session))
 	router.HandleFunc("/action", HandleAction(session))
+	router.HandleFunc("/pipelinelist", PipelineListAction(session))
 	log.Fatal(http.ListenAndServe(":8080", router))
 
 }
@@ -133,6 +135,59 @@ func HandleAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 			http.Error(w, "Cannot Parse", 400)
 			return
 		}
+
+	}
+}
+
+
+
+func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
+	return func (w http.ResponseWriter, r *http.Request){
+
+		session := s.Copy()
+		defer session.Close()
+
+		if r.Body == nil {
+			http.Error(w, "Please send a request body", 400)
+			return
+		}
+
+		cmd , err := slack.SlashCommandParse(r)
+
+		if err != nil {
+			fmt.Println("Cannot parse %s\n", r.Body)
+			http.Error(w, "Cannot Parse", 400)
+			return
+		}
+
+		usr, err := GetUser(session,cmd.TeamID,cmd.UserID)
+
+		msg := slack.Msg{}
+		w.Header().Set("Content-Type", "application/json")
+
+
+		if usr == nil {
+			composeLogin(&msg)
+			json.NewEncoder(w).Encode(msg)
+			return
+		}
+
+		msg.ResponseType = "ephemeral"
+
+		cfclient := webapi.New(usr.CFTokens[0].Token)
+
+		pipelines, err := cfclient.PipelinesList()
+
+		if len(pipelines) > 0 && err == nil{
+			msg.Text = "*" + strconv.Itoa(len(pipelines)) + " Pipelines found*"
+			msg.Attachments = ComposePipelinesAtt(pipelines)
+		}else{
+			msg.Text = "*No Pipelines found*"
+		}
+
+		json.NewEncoder(w).Encode(msg)
+		return
+
 
 	}
 }
