@@ -43,6 +43,12 @@ func main() {
 
 	session.SetMode(mgo.Monotonic, true)
 
+	db := session.DB(Mongo_DB)
+	err = db.DropDatabase()
+	if err != nil {
+		fmt.Printf("cannot drop %s\n",err)
+	}
+
 	ensureIndex(session)
 
 	user := User{TeamID:"2",UserID:"1",Name:"Raziel",Team:"Codefresh",CFTokens:[]CodefreshToken{{AccountName:`Codefresh-inc`, Token:`1111`},{AccountName:`Razielt77`,Token:`2222`}}}
