@@ -163,7 +163,7 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 		usr, err := GetUser(session,cmd.TeamID,cmd.UserID)
 
 		msg := slack.Msg{}
-		msg.ResponseType = "ephemeral"
+		msg.ResponseType = "in_channel"
 		w.Header().Set("Content-Type", "application/json")
 
 
@@ -180,7 +180,7 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 
 		pipelines, err := cfclient.PipelinesList()
 
-		fmt.Printf("No of pipelines is: %s\nerr is %s",len(pipelines),err)
+		fmt.Printf("No of pipelines is: %v\nerr is %v\n",len(pipelines),err)
 
 
 
@@ -191,9 +191,9 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 			msg.Text = "*No Pipelines found*"
 		}
 
+		fmt.Printf("msg is: %s\n",msg)
 		json.NewEncoder(w).Encode(msg)
 		return
-
 
 	}
 }
