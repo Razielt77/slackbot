@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/Razielt77/cf-webapi-go"
 	"github.com/nlopes/slack"
@@ -18,14 +17,6 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 			Color:"#11b5a4"}
 
 		if pipeline.LastWorkflow.Status != webapi.NO_LAST_WORKFLOW {
-
-
-			str, err := json.Marshal(pipeline.LastWorkflow)
-
-			if err != nil {
-				fmt.Println(err)
-				return nil
-			}
 
 
 			t_start, err := time.Parse(time.RFC3339, pipeline.LastWorkflow.CreatedTS)
