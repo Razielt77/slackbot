@@ -67,15 +67,6 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, w http.
 
 			w.Header().Set("Content-Type", "application/json")
 			SetToken(s, &intcallback)
-			text := ":white_check_mark: *Token submitted!*"
-			/*att := slack.Attachment{
-				Color:"#11b5a4",
-				Text: "Currently supported commands:\ncf-pipelines-list: List pipelines\n"}
-			msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att},ReplaceOriginal:true}*/
-
-			msg := slack.Msg{ResponseType:"ephemeral",Text:text}
-
-			json.NewEncoder(w).Encode(msg)
 
 		}
 
@@ -112,12 +103,12 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 		AddUser(session,user)
 	}
 
-	/*text := ":white_check_mark: *Token submitted!*"
+	text := ":white_check_mark: *Token submitted!*"
 	att := slack.Attachment{
 		Color:"#11b5a4",
 		Text: "Currently supported commands:\ncf-pipelines-list: List pipelines\n"}
 
-	msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
+	//msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
 
 
 	fmt.Printf("Using ts to: %s\n", ts )
@@ -127,7 +118,7 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 		fmt.Printf("%s\n", err)
 		return false
 	}
-	fmt.Printf("Message successfully sent to channel %s at %s", channelID, timestamp)*/
+	fmt.Printf("Message successfully sent to channel %s at %s", channelID, timestamp)
 
 	return true
 }
