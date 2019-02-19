@@ -55,11 +55,11 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 			}
 
 
-			/*p_att.Fields = append(p_att.Fields,
+			p_att.Fields = append(p_att.Fields,
 				slack.AttachmentField{Title:"Last Status", Value:pipeline.LastWorkflow.Status, Short:true},
 				slack.AttachmentField{Title:"Duration", Value: duration , Short:true},
-				slack.AttachmentField{Title:"Last Commit", Value:pipeline.LastWorkflow.CommitMsg, Short:false})*/
-			//p_att.AuthorIcon = pipeline.LastWorkflow.Avatar
+				slack.AttachmentField{Title:"Last Commit", Value:pipeline.LastWorkflow.CommitMsg, Short:false})
+			p_att.AuthorIcon = pipeline.LastWorkflow.Avatar
 			p_att.AuthorName= pipeline.LastWorkflow.Committer
 		}
 
