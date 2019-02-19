@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 const NOT_FOUND = "not found"
@@ -184,12 +185,12 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 
 		msg.Text = "*No Pipelines found*"
 
-		/*if len(pipelines) > 0 && err == nil{
+		if len(pipelines) > 0 && err == nil{
 			msg.Text = "*" + strconv.Itoa(len(pipelines)) + " Pipelines found*"
 			msg.Attachments = ComposePipelinesAtt(pipelines)
 		}else{
 			msg.Text = "*No Pipelines found*"
-		}*/
+		}
 
 
 		str, err := json.Marshal(msg)
