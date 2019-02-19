@@ -62,7 +62,9 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, w http.
 		switch intcallback.CallbackID{
 		case "enter_token":
 			fmt.Printf("token recieved (slack) is: %s\n",intcallback.Submission["cftoken"])
-			w.WriteHeader(200)
+			//w.WriteHeader(200)
+
+			w.Header().Set("Content-Type", "application/json")
 			SetToken(s, &intcallback)
 			text := ":white_check_mark: *Token submitted!*"
 			att := slack.Attachment{
