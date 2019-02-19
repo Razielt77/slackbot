@@ -163,6 +163,7 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 		usr, err := GetUser(session,cmd.TeamID,cmd.UserID)
 
 		msg := slack.Msg{}
+		msg.ResponseType = "ephemeral"
 		w.Header().Set("Content-Type", "application/json")
 
 
@@ -172,11 +173,16 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 			return
 		}
 
-		msg.ResponseType = "ephemeral"
+		fmt.Printf("User found: %s\nUsing token:%s\n",usr.Name,usr.CFTokens[0].Token)
+
 
 		cfclient := webapi.New(usr.CFTokens[0].Token)
 
 		pipelines, err := cfclient.PipelinesList()
+
+		fmt.Printf("No of pipelines is: %s\nerr is %s",len(pipelines),err)
+
+
 
 		if len(pipelines) > 0 && err == nil{
 			msg.Text = "*" + strconv.Itoa(len(pipelines)) + " Pipelines found*"
