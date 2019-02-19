@@ -64,6 +64,13 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, w http.
 			fmt.Printf("token recieved (slack) is: %s\n",intcallback.Submission["cftoken"])
 			w.WriteHeader(200)
 			SetToken(s, &intcallback)
+			text := ":white_check_mark: *Token submitted!*"
+			att := slack.Attachment{
+				Color:"#11b5a4",
+				Text: "Currently supported commands:\ncf-pipelines-list: List pipelines\n"}
+			msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att},ReplaceOriginal:true}
+
+			json.NewEncoder(w).Encode(msg)
 
 		}
 
@@ -100,23 +107,22 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 		AddUser(session,user)
 	}
 
-	text := ":white_check_mark: *Token submitted!*"
+	/*text := ":white_check_mark: *Token submitted!*"
 	att := slack.Attachment{
 		Color:"#11b5a4",
 		Text: "Currently supported commands:\ncf-pipelines-list: List pipelines\n"}
 
-	//msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
+	msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
 
 
 	fmt.Printf("Using ts to: %s\n", ts )
-	//channelID, timestamp, _, err:= slackApi.UpdateMessage(callback.Channel.ID,ts,slack.MsgOptionText(text, false),slack.MsgOptionTS(callback.ActionTs),slack.MsgOptionAttachments(att),slack.MsgOptionUpdate(ts))
 
 	channelID, timestamp, err := slackApi.PostMessage(callback.Channel.ID, slack.MsgOptionText(text, false),slack.MsgOptionAttachments(att))
 	if err != nil {
 		fmt.Printf("%s\n", err)
 		return false
 	}
-	fmt.Printf("Message successfully sent to channel %s at %s", channelID, timestamp)
+	fmt.Printf("Message successfully sent to channel %s at %s", channelID, timestamp)*/
 
 	return true
 }
