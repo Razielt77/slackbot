@@ -103,7 +103,7 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 	text := ":white_check_mark: *Token submitted!*"
 	att := slack.Attachment{
 		Color:"#11b5a4",
-		Text: "Learn more on Codefresh's slack commands at www.codefresh.io"}
+		Text: "Currently supported commands:\ncf-pipelines-list: List pipelines\n"}
 
 	//msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
 

@@ -26,7 +26,7 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 				fmt.Println(err)
 				return nil
 			}
-			fmt.Printf("Pipeline has last workflow: %s\n", str)
+
 
 			t_start, err := time.Parse(time.RFC3339, pipeline.LastWorkflow.CreatedTS)
 			if err != nil {
@@ -40,7 +40,6 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 			duration_t := t_finish.Sub(t_start)
 			duration := strconv.Itoa(int (duration_t.Minutes())) + " minutes."
 
-			fmt.Printf("Duration is: %s\n", duration)
 
 			//p_att.Ts = json.Number(t_finish.Unix())
 			switch pipeline.LastWorkflow.Status{
@@ -64,15 +63,7 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 			p_att.AuthorName= pipeline.LastWorkflow.Committer
 		}
 
-		str, err := json.Marshal(p_att)
 
-		if err != nil {
-			fmt.Println(err)
-			return nil
-		}
-
-		fmt.Printf("attachment is (in function) is: %s\n",str)
-		//status := slack.AttachmentField{}
 		attarr = append(attarr, p_att)
 	}
 	return attarr

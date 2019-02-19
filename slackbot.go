@@ -201,13 +201,6 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 		}
 
 
-		str, err := json.Marshal(msg)
-
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
 		//fmt.Printf("msg is: %s\n",str)
 
 		json.NewEncoder(w).Encode(msg)
