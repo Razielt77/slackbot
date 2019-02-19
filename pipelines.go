@@ -52,7 +52,7 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 
 		if err != nil {
 			fmt.Println(err)
-			return
+			return nil
 		}
 
 		fmt.Printf("attachment is (in function) is: %s\n",str)
