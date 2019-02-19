@@ -43,7 +43,7 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 
 			fmt.Printf("Duration is: %s\n", duration)
 
-			//p_att.Ts = json.Number(t_finish.Unix())
+			p_att.Ts = json.Number(t_finish.Unix())
 			switch pipeline.LastWorkflow.Status{
 			case "success":
 				p_att.FooterIcon = `https://raw.githubusercontent.com/Razielt77/slackbot/master/img/passed.png`
@@ -59,8 +59,8 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 				slack.AttachmentField{Title:"Last Status", Value:pipeline.LastWorkflow.Status, Short:true},
 				slack.AttachmentField{Title:"Duration", Value: duration , Short:true},
 				slack.AttachmentField{Title:"Last Commit", Value:pipeline.LastWorkflow.CommitMsg, Short:false})*/
-			//p_att.AuthorIcon = pipeline.LastWorkflow.Avatar
-			//p_att.AuthorName= pipeline.LastWorkflow.Committer
+			p_att.AuthorIcon = pipeline.LastWorkflow.Avatar
+			p_att.AuthorName= pipeline.LastWorkflow.Committer
 		}
 
 		str, err := json.Marshal(p_att)
