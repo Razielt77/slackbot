@@ -178,9 +178,7 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 
 		cfclient := webapi.New(usr.CFTokens[0].Token)
 
-		pipelines, err := cfclient.PipelinesList(webapi.OptionTag("slack"))
-
-		fmt.Printf("No of pipelines is: %v\nerr is %v\n",len(pipelines),err)
+		pipelines, err := cfclient.PipelinesList()
 
 
 		msg.Text = "*No Pipelines found*"
@@ -210,7 +208,7 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 			return
 		}
 
-		fmt.Printf("msg is: %s\n",str)
+		//fmt.Printf("msg is: %s\n",str)
 
 		json.NewEncoder(w).Encode(msg)
 		return
