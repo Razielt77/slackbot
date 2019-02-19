@@ -68,10 +68,10 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, w http.
 			w.Header().Set("Content-Type", "application/json")
 			SetToken(s, &intcallback)
 			text := ":white_check_mark: *Token submitted!*"
-			_ := slack.Attachment{
+			/*att := slack.Attachment{
 				Color:"#11b5a4",
 				Text: "Currently supported commands:\ncf-pipelines-list: List pipelines\n"}
-			//msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att},ReplaceOriginal:true}
+			msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att},ReplaceOriginal:true}*/
 
 			msg := slack.Msg{ResponseType:"ephemeral",Text:text}
 
