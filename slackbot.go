@@ -187,13 +187,28 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 
 		if len(pipelines) > 0 && err == nil{
 			msg.Text = "*" + strconv.Itoa(len(pipelines)) + " Pipelines found*"
-			msg.Attachments = ComposePipelinesAtt(pipelines)
+
+			att_arr := ComposePipelinesAtt(pipelines)
+			str, err := json.Marshal(att_arr)
+			fmt.Printf("att_arr is: %s\n",str)
+
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			msg.Attachments = att_arr
 		}else{
 			msg.Text = "*No Pipelines found*"
 		}
 
 
 		str, err := json.Marshal(msg)
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
 		fmt.Printf("msg is: %s\n",str)
 

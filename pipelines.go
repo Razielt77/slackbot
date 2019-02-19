@@ -2,10 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/Razielt77/cf-webapi-go"
 	"github.com/nlopes/slack"
-	"strconv"
-	"time"
 )
 
 func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
@@ -17,7 +16,7 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 			Footer:"Last Executed",
 			Color:"#11b5a4"}
 
-		if pipeline.LastWorkflow.CreatedTS != webapi.NO_LAST_WORKFLOW {
+		/*if pipeline.LastWorkflow.CreatedTS != webapi.NO_LAST_WORKFLOW {
 			t_start, err := time.Parse(time.RFC3339, pipeline.LastWorkflow.CreatedTS)
 			if err != nil {
 				panic(err)
@@ -47,7 +46,16 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 				slack.AttachmentField{Title:"Last Commit", Value:pipeline.LastWorkflow.CommitMsg, Short:false})
 			p_att.AuthorIcon = pipeline.LastWorkflow.Avatar
 			p_att.AuthorName= pipeline.LastWorkflow.Committer
+		}*/
+
+		str, err := json.Marshal(p_att)
+
+		if err != nil {
+			fmt.Println(err)
+			return
 		}
+
+		fmt.Printf("attachment is (in function) is: %s\n",str)
 		//status := slack.AttachmentField{}
 		attarr = append(attarr, p_att)
 	}
