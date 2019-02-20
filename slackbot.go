@@ -3,14 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Razielt77/cf-webapi-go"
 	"github.com/gorilla/mux"
 	"github.com/nlopes/slack"
 	"gopkg.in/mgo.v2"
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 )
 
 const NOT_FOUND = "not found"
@@ -181,39 +179,8 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 		json.NewEncoder(w).Encode(msg)
 
 
-		//Retrieving the pipelines
+		go SendPipelinesListMsg(usr,response_url)
 
-		pipelinesMsg := slack.Msg{}
-
-
-		cfclient := webapi.New(usr.CFTokens[0].Token)
-
-		pipelines, err := cfclient.PipelinesList()
-
-
-		pipelinesMsg.Text = "*No Pipelines found*"
-
-		if len(pipelines) > 0 && err == nil{
-			pipelinesMsg.Text = "*" + strconv.Itoa(len(pipelines)) + " Pipelines found*"
-
-			att_arr := ComposePipelinesAtt(pipelines)
-			str, err := json.Marshal(att_arr)
-			fmt.Printf("att_arr is: %s\n",str)
-
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-
-			pipelinesMsg.Attachments = att_arr
-		}else{
-			pipelinesMsg.Text = "*No Pipelines found*"
-		}
-
-
-		resp, err := DoPost(response_url,pipelinesMsg)
-
-		fmt.Printf("resp is: %s\n",resp)
 
 		//json.NewEncoder(w).Encode(msg)
 		return

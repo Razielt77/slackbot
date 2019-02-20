@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/Razielt77/cf-webapi-go"
 	"github.com/nlopes/slack"
@@ -58,4 +59,42 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 		attarr = append(attarr, p_att)
 	}
 	return attarr
+}
+
+func SendPipelinesListMsg(usr *User, response_url string){
+	//Retrieving the pipelines
+
+	pipelinesMsg := slack.Msg{}
+
+
+	cfclient := webapi.New(usr.CFTokens[0].Token)
+
+	pipelines, err := cfclient.PipelinesList()
+
+
+	pipelinesMsg.Text = "*No Pipelines found*"
+
+	if len(pipelines) > 0 && err == nil{
+		pipelinesMsg.Text = "*" + strconv.Itoa(len(pipelines)) + " Pipelines found*"
+
+		att_arr := ComposePipelinesAtt(pipelines)
+		str, err := json.Marshal(att_arr)
+		fmt.Printf("att_arr is: %s\n",str)
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		pipelinesMsg.Attachments = att_arr
+	}else{
+		pipelinesMsg.Text = "*No Pipelines found*"
+	}
+
+
+	resp, err := DoPost(response_url,pipelinesMsg)
+
+	fmt.Printf("resp is: %s\n",resp)
+
+	//json.NewEncoder(w).Encode(msg)
 }
