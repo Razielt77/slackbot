@@ -9,13 +9,16 @@ import (
 	"time"
 )
 
+const NOT_AVAILABLE string  = "Not Available"
+
 func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 	var attarr []slack.Attachment
 	for _, pipeline := range p_arr {
 		p_att := slack.Attachment{
 			Title:pipeline.Name,
 			TitleLink:string(`https://g.codefresh.io/pipelines/edit/summary?id=` + pipeline.ID),
-			Color:"#11b5a4"}
+			Color:"#ccc",
+			Footer: "Last Executed: Not Available"}
 
 		if pipeline.LastWorkflow.Status != webapi.NO_LAST_WORKFLOW {
 
@@ -37,6 +40,7 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 			switch pipeline.LastWorkflow.Status{
 			case "success":
 				p_att.FooterIcon = `https://raw.githubusercontent.com/Razielt77/slackbot/master/img/passed.png`
+				p_att.Color="#11b5a4"
 			case "error":
 				p_att.FooterIcon = `https://raw.githubusercontent.com/Razielt77/slackbot/master/img/failed.png`
 				p_att.Color ="#e83f43"
@@ -52,6 +56,12 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 				slack.AttachmentField{Title:"Duration", Value: duration , Short:true},
 				slack.AttachmentField{Title:"Last Commit", Value:commit, Short:false})
 			p_att.AuthorIcon = pipeline.LastWorkflow.Avatar
+			p_att.AuthorName= pipeline.LastWorkflow.Committer
+		}else{
+			p_att.Fields = append(p_att.Fields,
+				slack.AttachmentField{Title:"Last Status", Value:NOT_AVAILABLE, Short:true},
+				slack.AttachmentField{Title:"Duration", Value: NOT_AVAILABLE , Short:true},
+				slack.AttachmentField{Title:"Last Commit", Value:NOT_AVAILABLE, Short:false})
 			p_att.AuthorName= pipeline.LastWorkflow.Committer
 		}
 
