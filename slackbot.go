@@ -160,6 +160,8 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 			return
 		}
 
+		response_url := cmd.ResponseURL
+
 		usr, err := GetUser(session,cmd.TeamID,cmd.UserID)
 
 		msg := slack.Msg{}
@@ -175,16 +177,24 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 
 		fmt.Printf("User found: %s\nUsing token:%s\n",usr.Name,usr.CFTokens[0].Token)
 
+		msg.Text = "Retrieving  Pipelines..."
+		json.NewEncoder(w).Encode(msg)
+
+
+		//Retrieving the pipelines
+
+		pipelinesMsg := slack.Msg{}
+
 
 		cfclient := webapi.New(usr.CFTokens[0].Token)
 
 		pipelines, err := cfclient.PipelinesList()
 
 
-		msg.Text = "*No Pipelines found*"
+		pipelinesMsg.Text = "*No Pipelines found*"
 
 		if len(pipelines) > 0 && err == nil{
-			msg.Text = "*" + strconv.Itoa(len(pipelines)) + " Pipelines found*"
+			pipelinesMsg.Text = "*" + strconv.Itoa(len(pipelines)) + " Pipelines found*"
 
 			att_arr := ComposePipelinesAtt(pipelines)
 			str, err := json.Marshal(att_arr)
@@ -195,15 +205,17 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 				return
 			}
 
-			msg.Attachments = att_arr
+			pipelinesMsg.Attachments = att_arr
 		}else{
-			msg.Text = "*No Pipelines found*"
+			pipelinesMsg.Text = "*No Pipelines found*"
 		}
 
 
-		//fmt.Printf("msg is: %s\n",str)
+		resp, err := DoPost(response_url,pipelinesMsg)
 
-		json.NewEncoder(w).Encode(msg)
+		fmt.Printf("resp is: %s\n",resp)
+
+		//json.NewEncoder(w).Encode(msg)
 		return
 
 	}

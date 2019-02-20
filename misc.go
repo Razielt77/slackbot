@@ -26,7 +26,9 @@ func DoPost (url string, v interface{})([]byte, error){
 		return nil, err
 	}
 
+	token := "Bearer " + access_token
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Add("Authorization", token)
 
 	client := &http.Client{}
 
