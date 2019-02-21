@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Razielt77/cf-webapi-go"
 	"github.com/nlopes/slack"
 	"github.com/nlopes/slack/slackevents"
 	"gopkg.in/mgo.v2"
@@ -96,17 +97,31 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 	session := s.Copy()
 	defer session.Close()
 
-	user, _ := GetUser(session,callback.Team.ID,callback.User.ID)
+	user, err := GetUser(session,callback.Team.ID,callback.User.ID)
 
 	if user == nil{
-		user = &User{TeamID:callback.Team.ID,UserID:callback.User.ID,Name:callback.User.Name,Team:callback.Team.Name,CFTokens:[]CodefreshToken{{AccountName:"Codefresh",Token:callback.Submission["cftoken"],Active:true}}}
+
+		token := callback.Submission["cftoken"]
+		user = &User{TeamID:callback.Team.ID,UserID:callback.User.ID,Name:callback.User.Name,Team:callback.Team.Name,Token:token}
+
+		//retrieving user's accounts
+
+		cf_user, err := webapi.New(token).UserInfo()
+
+		if err != nil {return false}
+
+		user.CFUserName = cf_user.Name
+		user.CFAccounts = cf_user.Accounts
+		user.DefaultAccount = cf_user.DefaultAccount
+		user.Avatar = cf_user.UserData.Image
 		AddUser(session,user)
 	}
 
-	text := ":white_check_mark: *Token submitted!*"
+	text := ":white_check_mark: *Token successfully submitted!*"
 	att := slack.Attachment{
 		Color:"#11b5a4",
-		Text: "Currently supported commands:\ncf-pipelines-list: List pipelines\n"}
+		Text: "Welcome *"+user.CFUserName +"!*\nDefault account is: *" + user.CFAccounts[user.DefaultAccount].Name + "*\nCurrently supported commands:\n*cf-pipelines-list*: List pipelines\n",
+		ThumbURL: user.Avatar}
 
 	//msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
 

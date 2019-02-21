@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/Razielt77/cf-webapi-go"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -18,14 +19,14 @@ type User struct {
 	UserID		string `json:"userid"`
 	Name		string `json:"name"`
 	Team 		string `json:"team"`
-	CFTokens []CodefreshToken `json:"cftokens"`
+	Token 		string `json:"token"`
+	Avatar		string	`json:"avatar"`
+	CFUserName	string `json:"cf_username"`
+	DefaultAccount	int `json:"default_account"`
+	CFAccounts []webapi.AccountInfo `json:"cf_accounts"`
 }
 
-type CodefreshToken struct {
-	AccountName 	string 	`json:"accountname"`
-	Token 			string 	`json:"token"`
-	Active			bool 	`json:"active"`
-}
+
 
 func ensureIndex(s *mgo.Session) {
 
