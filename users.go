@@ -19,10 +19,9 @@ type User struct {
 	UserID		string `json:"userid"`
 	Name		string `json:"name"`
 	Team 		string `json:"team"`
-	Token 		string `json:"token"`
 	Avatar		string	`json:"avatar"`
 	CFUserName	string `json:"cf_username"`
-	DefaultAccount	int `json:"default_account"`
+	ActiveAccount	int `json:"active_account"`
 	CFAccounts []webapi.AccountInfo `json:"cf_accounts"`
 }
 

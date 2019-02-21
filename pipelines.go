@@ -77,7 +77,7 @@ func SendPipelinesListMsg(usr *User, response_url string){
 	pipelinesMsg := slack.Msg{}
 
 
-	cfclient := webapi.New(usr.Token)
+	cfclient := webapi.New(usr.CFAccounts[usr.ActiveAccount].Token)
 
 	pipelines, err := cfclient.PipelinesList()
 

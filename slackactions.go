@@ -102,7 +102,7 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 	if user == nil{
 
 		token := callback.Submission["cftoken"]
-		user = &User{TeamID:callback.Team.ID,UserID:callback.User.ID,Name:callback.User.Name,Team:callback.Team.Name,Token:token}
+		user = &User{TeamID:callback.Team.ID,UserID:callback.User.ID,Name:callback.User.Name,Team:callback.Team.Name}
 
 		//retrieving user's accounts
 
@@ -112,15 +112,16 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 
 		user.CFUserName = cf_user.Name
 		user.CFAccounts = cf_user.Accounts
-		user.DefaultAccount = cf_user.DefaultAccount
+		user.ActiveAccount = cf_user.ActiveAccount
 		user.Avatar = cf_user.UserData.Image
+		user.CFAccounts[user.ActiveAccount].Token = token
 		AddUser(session,user)
 	}
 
 	text := ":white_check_mark: *Token successfully submitted!*"
 	att := slack.Attachment{
 		Color:"#11b5a4",
-		Text: "Welcome *"+user.CFUserName +"!*\nDefault account is: *" + user.CFAccounts[user.DefaultAccount].Name + "*\nCurrently supported commands:\n*cf-pipelines-list*: List pipelines\n",
+		Text: "Welcome *"+user.CFUserName +"!*\nDefault account is: *" + user.CFAccounts[user.ActiveAccount].Name + "*\nCurrently supported commands:\n*cf-pipelines-list*: List pipelines\n",
 		ThumbURL: user.Avatar}
 
 	//msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
