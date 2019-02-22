@@ -78,13 +78,12 @@ func SendPipelinesListMsg(usr *User, response_url string){
 	pipelinesMsg := slack.Msg{}
 
 
-	var token string
+	token := usr.GetToken()
 
-	for _, account := range usr.CFAccounts{
-		if account.Name == usr.ActiveAccount{
-			token = account.Token
-		}
+	if token == ""{
+		fmt.Println("No token found!\n")
 	}
+
 
 
 	cfclient := webapi.New(token)

@@ -114,10 +114,10 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 		user.CFAccounts = cf_user.Accounts
 		user.ActiveAccount = cf_user.ActiveAccount
 		user.Avatar = cf_user.UserData.Image
-		for _, account := range user.CFAccounts{
-			if account.Name == user.ActiveAccount{
-				account.Token = token
-			}
+		err = user.SetToken(token)
+
+		if err != nil{
+			fmt.Println(err)
 		}
 
 		AddUser(session,user)
@@ -139,7 +139,7 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 		fmt.Printf("%s\n", err)
 		return false
 	}
-	fmt.Printf("Message successfully sent to channel %s at %s", channelID, timestamp)
+	//fmt.Printf("Message successfully sent to channel %s at %s\n", channelID, timestamp)
 
 	return true
 }

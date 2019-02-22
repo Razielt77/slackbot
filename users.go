@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/Razielt77/cf-webapi-go"
 	"gopkg.in/mgo.v2"
@@ -23,6 +24,26 @@ type User struct {
 	CFUserName		string `json:"cf_username"`
 	ActiveAccount	string `json:"active_account"`
 	CFAccounts []webapi.AccountInfo `json:"cf_accounts"`
+}
+
+func (u *User)SetToken(token string) error{
+	for _, account := range u.CFAccounts{
+		if account.Name == u.ActiveAccount{
+			account.Token = token
+			return nil
+		}
+	}
+	return errors.New("no active account set")
+}
+
+
+func (u *User)GetToken() string{
+	for _, account := range u.CFAccounts{
+		if account.Name == u.ActiveAccount{
+			return account.Token
+		}
+	}
+	return ""
 }
 
 
