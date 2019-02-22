@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Razielt77/cf-webapi-go"
 	"github.com/nlopes/slack"
+	"log"
 	"strconv"
 	"time"
 )
@@ -85,9 +86,12 @@ func SendPipelinesListMsg(usr *User, response_url string){
 		}
 	}
 
+
 	cfclient := webapi.New(token)
 
 	pipelines, err := cfclient.PipelinesList()
+
+	log.Printf("Token used:%s\nNumber of pipelines is:%v\n",token,len(pipelines))
 
 
 	pipelinesMsg.Text = "*No Pipelines found*"
