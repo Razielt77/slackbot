@@ -15,13 +15,13 @@ const (
 )
 
 type User struct {
-	TeamID 		string `json:"teamid"`
-	UserID		string `json:"userid"`
-	Name		string `json:"name"`
-	Team 		string `json:"team"`
-	Avatar		string	`json:"avatar"`
-	CFUserName	string `json:"cf_username"`
-	ActiveAccount	int `json:"active_account"`
+	TeamID 			string `json:"teamid"`
+	UserID			string `json:"userid"`
+	Name			string `json:"name"`
+	Team 			string `json:"team"`
+	Avatar			string	`json:"avatar"`
+	CFUserName		string `json:"cf_username"`
+	ActiveAccount	string `json:"active_account"`
 	CFAccounts []webapi.AccountInfo `json:"cf_accounts"`
 }
 

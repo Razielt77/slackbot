@@ -114,7 +114,12 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 		user.CFAccounts = cf_user.Accounts
 		user.ActiveAccount = cf_user.ActiveAccount
 		user.Avatar = cf_user.UserData.Image
-		user.CFAccounts[user.ActiveAccount].Token = token
+		for _, account := range user.CFAccounts{
+			if account.Name == user.ActiveAccount{
+				account.Token = token
+			}
+		}
+
 		AddUser(session,user)
 	}
 
