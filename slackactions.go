@@ -126,7 +126,7 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 	text := ":white_check_mark: *Token successfully submitted!*"
 	att := slack.Attachment{
 		Color:"#11b5a4",
-		Text: "Welcome *"+user.CFUserName +"!*\nDefault account is: *" + user.CFAccounts[user.ActiveAccount].Name + "*\nCurrently supported commands:\n*cf-pipelines-list*: List pipelines\n",
+		Text: "Welcome *"+user.CFUserName +"!*\nActive account is: *" + user.ActiveAccount + "*\nCurrently supported commands:\n*cf-pipelines-list*: List pipelines\n",
 		ThumbURL: user.Avatar}
 
 	//msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
