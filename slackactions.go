@@ -134,7 +134,7 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 
 	fmt.Printf("Using ts to: %s\n", ts )
 
-	channelID, timestamp, err := slackApi.PostMessage(callback.Channel.ID, slack.MsgOptionText(text, false),slack.MsgOptionAttachments(att))
+	_, _, err = slackApi.PostMessage(callback.Channel.ID, slack.MsgOptionText(text, false),slack.MsgOptionAttachments(att))
 	if err != nil {
 		fmt.Printf("%s\n", err)
 		return false
