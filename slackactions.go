@@ -120,9 +120,6 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 			fmt.Println(err)
 		}
 
-		fmt.Printf("User before adding:")
-		user.Print()
-
 		AddUser(session,user)
 	}
 

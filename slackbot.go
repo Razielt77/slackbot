@@ -162,8 +162,6 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 
 		usr, err := GetUser(session,cmd.TeamID,cmd.UserID)
 
-		fmt.Printf("User retrieved")
-		usr.Print()
 
 		msg := slack.Msg{}
 		msg.ResponseType = "in_channel"
