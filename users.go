@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/Razielt77/cf-webapi-go"
@@ -44,6 +45,15 @@ func (u *User)GetToken() string{
 		}
 	}
 	return ""
+}
+
+func (u *User)Print() {
+	bytes, err := json.Marshal(u)
+	if err != nil {
+		fmt.Println(err)
+	}else{
+		fmt.Printf("User is:%s\n",bytes)
+	}
 }
 
 
