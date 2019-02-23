@@ -28,8 +28,11 @@ type User struct {
 }
 
 func (u *User)SetToken(token string) error{
+
+	fmt.Printf("Setting Token:\nToken is:%s\nActive Account is:%s\n",token,u.ActiveAccount)
 	for _, account := range u.CFAccounts{
 		if account.Name == u.ActiveAccount{
+			fmt.Printf("Setting the token\n")
 			account.Token = token
 			return nil
 		}
