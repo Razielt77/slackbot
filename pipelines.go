@@ -70,7 +70,7 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 	return attarr
 }
 
-func SendPipelinesListMsg(usr *User, response_url string){
+func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 	//Retrieving the pipelines
 
 	pipelinesMsg := slack.Msg{}
@@ -86,7 +86,9 @@ func SendPipelinesListMsg(usr *User, response_url string){
 
 	cfclient := webapi.New(token)
 
-	pipelines, err := cfclient.PipelinesList()
+	options := ComposeOption()
+
+	pipelines, err := cfclient.PipelinesList(options...)
 
 
 
@@ -100,9 +102,13 @@ func SendPipelinesListMsg(usr *User, response_url string){
 	}
 
 
-	resp, err := DoPost(response_url,pipelinesMsg)
+	resp, err := DoPost(cmd.ResponseURL,pipelinesMsg)
 
 	fmt.Printf("resp is: %s\n",resp)
 
 	//json.NewEncoder(w).Encode(msg)
+}
+
+func ComposeOption() []webapi.Option{
+	return nil
 }

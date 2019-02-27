@@ -158,8 +158,6 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 			return
 		}
 
-		response_url := cmd.ResponseURL
-
 		usr, err := GetUser(session,cmd.TeamID,cmd.UserID)
 
 
@@ -180,7 +178,7 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 		json.NewEncoder(w).Encode(msg)
 
 
-		go SendPipelinesListMsg(usr,response_url)
+		go SendPipelinesListMsg(usr,&cmd)
 
 
 		//json.NewEncoder(w).Encode(msg)
