@@ -76,10 +76,10 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 
 
-	msg := slack.Msg{}
-	msg.ResponseType = "in_channel"
-	msg.Text = "Retrieving Pipelines..."
-	DoPost(cmd.ResponseURL,msg)
+	if SendSimpleText(cmd.ResponseURL,"Retrieving Pipelines...") != nil {
+		fmt.Printf("Cannot send message\n")
+		return
+	}
 
 	//Retrieving the pipelines
 
@@ -90,16 +90,12 @@ func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 
 	if token == ""{
 		fmt.Println("No token found!\n")
+		return
 	}
-
-
 
 	cfclient := webapi.New(token)
 
-	var options []webapi.Option
-
-	options = nil
-
+	var options []webapi.Option = nil
 
 
 	if cmd.Text != ""{
@@ -114,11 +110,7 @@ func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 		}
 	}
 
-
-
-
 	pipelines, err := cfclient.PipelinesList(options...)
-
 
 
 	pipelinesMsg.Text = "*No Pipelines found*"
@@ -130,12 +122,11 @@ func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 		pipelinesMsg.Text = "*No Pipelines found*"
 	}
 
+	_, err = DoPost(cmd.ResponseURL,pipelinesMsg)
 
-	resp, err := DoPost(cmd.ResponseURL,pipelinesMsg)
-
-	fmt.Printf("resp is: %s\n",resp)
-
-	//json.NewEncoder(w).Encode(msg)
+	if err != nil {
+		fmt.Printf("Cannot send message\n")
+	}
 }
 
 type Flag func() (string, webapi.OptionGen)

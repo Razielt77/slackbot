@@ -4,9 +4,19 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/nlopes/slack"
 	"io/ioutil"
 	"net/http"
 )
+
+func SendSimpleText (url, message string) error {
+
+	msg := slack.Msg{}
+	msg.ResponseType = "in_channel"
+	msg.Text = message
+	_, err := DoPost(url,msg)
+	return err
+}
 
 func DoPost (url string, v interface{})([]byte, error){
 

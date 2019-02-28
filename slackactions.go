@@ -130,7 +130,7 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 			  "!*\nActive account is: *" +
 			   user.ActiveAccount +
 			  "*\nCurrently supported commands*:\n" +
-			  "*/cf-pipelines-list*  List pipelines. Supported flags (optional) tag=value limit=value \n",
+			  "*/cf-pipelines-list*  List pipelines.\n",
 		ThumbURL: user.Avatar}
 
 	//msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
