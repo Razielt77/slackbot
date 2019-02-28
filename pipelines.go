@@ -97,7 +97,7 @@ func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 
 	if cmd.Text != ""{
 		fmt.Printf("optiosn string is:%s\n",cmd.Text)
-		options, err = ComposeOption(cmd.Text,TagFlag())
+		options, err = ComposeOption(cmd.Text,TagFlag(),LimitFlag())
 
 		if err != nil {
 			fmt.Println(err)
@@ -109,9 +109,6 @@ func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 
 
 
-
-
-	fmt.Printf("no of options are:%v\n",len(options))
 
 	pipelines, err := cfclient.PipelinesList(options...)
 
@@ -142,6 +139,12 @@ func TagFlag() Flag {
 	}
 }
 
+func LimitFlag() Flag {
+	return func() (string, webapi.OptionGen){
+		return "limit",webapi.OptionLimit
+	}
+}
+
 
 
 
@@ -150,7 +153,7 @@ func ComposeOption(command string, flags ...Flag) ([]webapi.Option , error){
 	var options []webapi.Option
 	var match_arr []string
 
-	fmt.Printf("Number of flag types are:%v\n",len(flags))
+	//fmt.Printf("Number of flag types are:%v\n",len(flags))
 	for _ , flag := range flags {
 		key, option := flag()
 		str := `(\s+` + key + `|^tag)\s*?=\s*?\w+`
@@ -161,14 +164,12 @@ func ComposeOption(command string, flags ...Flag) ([]webapi.Option , error){
 		}
 		match := re.FindString(command)
 		if match != "" {
-			fmt.Printf("match found! %s\n",match)
 			arr := strings.Split(match,"=")
 			if len(arr) !=2 {
 				return nil, errors.New("Parsing error")
 			}
 			value := strings.Split(match,"=")[1]
 			value = strings.Trim(value," ")
-			fmt.Printf("value found! %s\n",value)
 			options = append(options, option(value))
 			match_arr = append(match_arr,match)
 		}
