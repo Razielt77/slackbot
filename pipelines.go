@@ -1,10 +1,13 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/Razielt77/cf-webapi-go"
 	"github.com/nlopes/slack"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -86,7 +89,16 @@ func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 
 	cfclient := webapi.New(token)
 
-	options := ComposeOption()
+	options, err := ComposeOption(cmd.Command,TagFlag())
+
+	if err != nil {
+		fmt.Println(err)
+		pipelinesMsg.Text = "*Parsing Error:" + err.Error() +"*"
+		DoPost(cmd.ResponseURL,pipelinesMsg)
+		return
+	}
+
+	fmt.Printf("no of options are:%v\n",len(options))
 
 	pipelines, err := cfclient.PipelinesList(options...)
 
@@ -109,6 +121,53 @@ func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 	//json.NewEncoder(w).Encode(msg)
 }
 
-func ComposeOption() []webapi.Option{
-	return nil
+type Flag func() (string, webapi.OptionGen)
+
+func TagFlag() Flag {
+	return func() (string, webapi.OptionGen){
+		return "tag",webapi.OptionTag
+	}
+}
+
+
+
+
+func ComposeOption(command string, flags ...Flag) ([]webapi.Option , error){
+
+	var options []webapi.Option
+	var match_arr []string
+	for _ , flag := range flags {
+		key, option := flag()
+		str := `(\s+` + key + `|^tag)\s*?=\s*?\w+`
+		re, err := regexp.Compile(str)
+		if err != nil{
+			fmt.Println(err)
+			return nil, errors.New("Parsing error")
+		}
+		match := re.FindString(command)
+		if match != "" {
+			arr := strings.Split(match,"=")
+			if len(arr) !=2 {
+				return nil, errors.New("Parsing error")
+			}
+			value := strings.Split(match,"=")[1]
+			value = strings.Trim(value," ")
+			options = append(options, option(value))
+			match_arr = append(match_arr,match)
+		}
+
+	}
+
+	//checking if there are any redundant characters
+	cmd := command
+	for _, str := range match_arr {
+		cmd = strings.Replace(cmd,str,"",1)
+	}
+	cmd = strings.Trim(cmd," ")
+
+	if cmd != ""{
+		return nil, errors.New("Parsing error")
+	}
+	return options,nil
+
 }
