@@ -78,7 +78,7 @@ func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 
 	pipelinesMsg := slack.Msg{}
 
-
+	var err error = nil
 	token := usr.GetToken()
 
 	if token == ""{
@@ -89,14 +89,25 @@ func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 
 	cfclient := webapi.New(token)
 
-	options, err := ComposeOption(cmd.Command,TagFlag())
+	var options []webapi.Option
 
-	if err != nil {
-		fmt.Println(err)
-		pipelinesMsg.Text = "*Parsing Error:" + err.Error() +"*"
-		DoPost(cmd.ResponseURL,pipelinesMsg)
-		return
+	options = nil
+
+	if cmd.Command != ""{
+		fmt.Printf("command is:%s\n",cmd.Command)
+		options, err = ComposeOption(cmd.Command,TagFlag())
+
+		if err != nil {
+			fmt.Println(err)
+			pipelinesMsg.Text = "*Parsing Error:" + err.Error() +"*"
+			DoPost(cmd.ResponseURL,pipelinesMsg)
+			return
+		}
 	}
+
+
+
+
 
 	fmt.Printf("no of options are:%v\n",len(options))
 
@@ -136,6 +147,8 @@ func ComposeOption(command string, flags ...Flag) ([]webapi.Option , error){
 
 	var options []webapi.Option
 	var match_arr []string
+
+	fmt.Printf("Number of flag types are:%v\n",len(flags))
 	for _ , flag := range flags {
 		key, option := flag()
 		str := `(\s+` + key + `|^tag)\s*?=\s*?\w+`
@@ -146,12 +159,14 @@ func ComposeOption(command string, flags ...Flag) ([]webapi.Option , error){
 		}
 		match := re.FindString(command)
 		if match != "" {
+			fmt.Printf("match found! %s\n",match)
 			arr := strings.Split(match,"=")
 			if len(arr) !=2 {
 				return nil, errors.New("Parsing error")
 			}
 			value := strings.Split(match,"=")[1]
 			value = strings.Trim(value," ")
+			fmt.Printf("value found! %s\n",value)
 			options = append(options, option(value))
 			match_arr = append(match_arr,match)
 		}
