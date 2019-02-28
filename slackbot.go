@@ -164,10 +164,9 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 		usr, err := GetUser(session,cmd.TeamID,cmd.UserID)
 
 
-		msg := slack.Msg{}
-		msg.ResponseType = "ephemeral"
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(msg)
+
+		w.WriteHeader(200)
+
 
 
 		if usr == nil {
