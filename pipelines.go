@@ -12,6 +12,8 @@ import (
 )
 
 const NOT_AVAILABLE string  = "Not Available"
+const ACTIVE_PIPELINE_COMMAND string  = "/cf-pipelines-list-active"
+const ACTIVE_DURATION_IN_HOURS float64  = 168
 
 func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 	var attarr []slack.Attachment
@@ -100,7 +102,7 @@ func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 
 	if cmd.Text != ""{
 		fmt.Printf("optiosn string is:%s\n",cmd.Text)
-		options, err = ComposeOption(cmd.Text,TagFlag(),LimitFlag())
+		options, err = ComposeOption(cmd.Text,TagFlag(),LimitFlag1)
 
 		if err != nil {
 			fmt.Println(err)
@@ -112,10 +114,16 @@ func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 
 	pipelines, err := cfclient.PipelinesList(options...)
 
+	if cmd.Command == ACTIVE_PIPELINE_COMMAND{
+		pipelines = FilterNonActivePipeline(pipelines)
+	}
 
 	pipelinesMsg.Text = "*No Pipelines found*"
 
 	if len(pipelines) > 0 && err == nil{
+
+		//
+
 		pipelinesMsg.Text = "*" + strconv.Itoa(len(pipelines)) + " Pipelines found*"
 		pipelinesMsg.Attachments = ComposePipelinesAtt(pipelines)
 	}else{
@@ -127,6 +135,21 @@ func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 	if err != nil {
 		fmt.Printf("Cannot send message\n")
 	}
+}
+
+
+func FilterNonActivePipeline (pipelines []webapi.Pipeline) []webapi.Pipeline{
+	var active_pipelines []webapi.Pipeline = nil
+	for i, _ := range pipelines {
+		t_finish, err := time.Parse(time.RFC3339, pipelines[i].LastWorkflow.FinishedTS)
+		if err == nil {
+			duration := time.Since(t_finish)
+			if duration.Hours() < ACTIVE_DURATION_IN_HOURS {
+				active_pipelines = append(active_pipelines,pipelines[i])
+			}
+		}
+	}
+	return active_pipelines
 }
 
 type Flag func() (string, webapi.OptionGen)
@@ -141,6 +164,10 @@ func LimitFlag() Flag {
 	return func() (string, webapi.OptionGen){
 		return "limit",webapi.OptionLimit
 	}
+}
+
+func LimitFlag1() (string, webapi.OptionGen){
+	return "limit",webapi.OptionLimit
 }
 
 
