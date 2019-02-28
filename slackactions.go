@@ -126,13 +126,14 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 	text := ":white_check_mark: *Token successfully submitted!*"
 	att := slack.Attachment{
 		Color:"#11b5a4",
-		Text: "Welcome *"+user.CFUserName +"!*\nActive account is: *" + user.ActiveAccount + "*\nCurrently supported commands:\n*cf-pipelines-list*: List pipelines. Supported flags (optional): tag=value limit=value\n",
-		ThumbURL: user.Avatar}.
+		Text: "Welcome *"+user.CFUserName +
+			  "!*\nActive account is: *" +
+			   user.ActiveAccount +
+			  "*\nCurrently supported commands*:\n" +
+			  "*/cf-pipelines-list*  List pipelines. Supported flags (optional) tag=value limit=value \n",
+		ThumbURL: user.Avatar}
 
 	//msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
-
-
-	fmt.Printf("Using ts to: %s\n", ts )
 
 	_, _, err = slackApi.PostMessage(callback.Channel.ID, slack.MsgOptionText(text, false),slack.MsgOptionAttachments(att))
 	if err != nil {

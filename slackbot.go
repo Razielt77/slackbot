@@ -174,7 +174,7 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 
 		//fmt.Printf("User found: %s\nUsing token:%s\n",usr.Name,usr.CFTokens[0].Token)
 
-		msg.Text = "Retrieving  Pipelines..."
+		//msg.Text = "Retrieving  Pipelines..."
 		json.NewEncoder(w).Encode(msg)
 
 

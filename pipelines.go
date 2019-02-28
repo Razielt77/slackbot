@@ -74,6 +74,13 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 }
 
 func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
+
+
+	msg := slack.Msg{}
+	msg.ResponseType = "in_channel"
+	msg.Text = "Retrieving Pipelines..."
+	DoPost(cmd.ResponseURL,msg)
+
 	//Retrieving the pipelines
 
 	pipelinesMsg := slack.Msg{}
