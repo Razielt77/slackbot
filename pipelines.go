@@ -15,6 +15,19 @@ const NOT_AVAILABLE string  = "Not Available"
 const ACTIVE_PIPELINE_COMMAND string  = "/cf-pipelines-list-active"
 const ACTIVE_DURATION_IN_HOURS float64  = 168
 
+
+type Flag func() (string, webapi.OptionGen)
+
+func TagFlag() (string, webapi.OptionGen){
+	return "tag",webapi.OptionTag
+}
+
+func LimitFlag() (string, webapi.OptionGen){
+	return "limit",webapi.OptionLimit
+}
+
+
+
 func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 	var attarr []slack.Attachment
 	for _, pipeline := range p_arr {
@@ -102,7 +115,7 @@ func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 
 	if cmd.Text != ""{
 		fmt.Printf("optiosn string is:%s\n",cmd.Text)
-		options, err = ComposeOption(cmd.Text,TagFlag(),LimitFlag1)
+		options, err = ComposeOption(cmd.Text,TagFlag,LimitFlag)
 
 		if err != nil {
 			fmt.Println(err)
@@ -150,24 +163,6 @@ func FilterNonActivePipeline (pipelines []webapi.Pipeline) []webapi.Pipeline{
 		}
 	}
 	return active_pipelines
-}
-
-type Flag func() (string, webapi.OptionGen)
-
-func TagFlag() Flag {
-	return func() (string, webapi.OptionGen){
-		return "tag",webapi.OptionTag
-	}
-}
-
-func LimitFlag() Flag {
-	return func() (string, webapi.OptionGen){
-		return "limit",webapi.OptionLimit
-	}
-}
-
-func LimitFlag1() (string, webapi.OptionGen){
-	return "limit",webapi.OptionLimit
 }
 
 
