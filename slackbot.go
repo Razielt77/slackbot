@@ -43,11 +43,11 @@ func main() {
 
 	session.SetMode(mgo.Monotonic, true)
 
-	db := session.DB(Mongo_DB)
+	/*db := session.DB(Mongo_DB)
 	err = db.DropDatabase()
 	if err != nil {
 		fmt.Printf("cannot drop %s\n",err)
-	}
+	}*/
 
 	ensureIndex(session)
 
@@ -105,7 +105,7 @@ func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", Handler(session))
 	router.HandleFunc("/action", HandleAction(session))
-	router.HandleFunc("/pipelinelist", PipelineListAction(session))
+	router.HandleFunc("/pipelineslist", PipelineListAction(session))
 	log.Fatal(http.ListenAndServe(":8080", router))
 
 }
