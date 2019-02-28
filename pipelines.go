@@ -108,7 +108,7 @@ func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 
 		if err != nil {
 			fmt.Println(err)
-			pipelinesMsg.Text = "*Parsing Error:" + err.Error() +"*"
+			pipelinesMsg.Text = ":exclamation: *Error: " + err.Error() +"*"
 			DoPost(cmd.ResponseURL,pipelinesMsg)
 			return
 		}
@@ -163,7 +163,7 @@ func ComposeOption(command string, flags ...Flag) ([]webapi.Option , error){
 	//fmt.Printf("Number of flag types are:%v\n",len(flags))
 	for _ , flag := range flags {
 		key, option := flag()
-		str := `(\s+` + key + `|^tag)\s*?=\s*?\w+`
+		str := `(\s+` + key + `|^` + key +`)\s*?=\s*?\w+`
 		re, err := regexp.Compile(str)
 		if err != nil{
 			fmt.Println(err)
