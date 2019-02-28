@@ -62,3 +62,42 @@ func DoPost (url string, v interface{})([]byte, error){
 	return body,err
 
 }
+
+
+func ParseSlashCommand(w http.ResponseWriter, r *http.Request) *slack.SlashCommand {
+
+	if r.Body == nil {
+		http.Error(w, "Please send a request body", 400)
+		return nil
+	}
+
+	cmd , err := slack.SlashCommandParse(r)
+
+	if err != nil {
+		fmt.Println("Cannot parse %s\n", r.Body)
+		http.Error(w, "Cannot Parse", 400)
+		return nil
+	}
+
+	return &cmd
+}
+
+
+func ComposeLogin()  *slack.Msg{
+
+
+	msg := slack.Msg{}
+	msg.ResponseType = "ephemeral"
+	msg.Text = "*hmm...seems like you haven't logged in recently*"
+	att := slack.Attachment{
+		Title:"Fetch your Codefresh's Token",
+		TitleLink:"https://g.codefresh.io/account-admin/account-conf/tokens#autogen=codefresh-slack-bot",
+		Color:"#11b5a4",
+		CallbackID:"enter_token",
+		Text: "Go to your Codefresh's Accounts Settings->Tokens to fetch/create your token."}
+	att.Actions = []slack.AttachmentAction{{Name: "add-token", Text: "Enter Token", Type: "button",Style:"primary" ,Value: "start"}}
+
+	msg.Attachments = []slack.Attachment{att}
+
+	return &msg
+}

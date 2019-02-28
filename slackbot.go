@@ -102,9 +102,12 @@ func main() {
 
 	slackApi = slack.New(access_token)
 
+
+
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", Handler(session))
 	router.HandleFunc("/action", HandleAction(session))
+	router.HandleFunc("/accountchange", AccountChangeCommand(session))
 	router.HandleFunc("/pipelineslist", PipelineListAction(session))
 	log.Fatal(http.ListenAndServe(":8080", router))
 
@@ -162,26 +165,20 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 
 
 		msg := slack.Msg{}
-		msg.ResponseType = "in_channel"
+		msg.ResponseType = "ephemeral"
 		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(msg)
 
 
 		if usr == nil {
-			composeLogin(&msg)
-			json.NewEncoder(w).Encode(msg)
+			lgn := ComposeLogin()
+			go DoPost(cmd.ResponseURL,lgn)
 			return
 		}
-
-		//fmt.Printf("User found: %s\nUsing token:%s\n",usr.Name,usr.CFTokens[0].Token)
-
-		//msg.Text = "Retrieving  Pipelines..."
-		json.NewEncoder(w).Encode(msg)
 
 
 		go SendPipelinesListMsg(usr,&cmd)
 
-
-		//json.NewEncoder(w).Encode(msg)
 		return
 
 	}
@@ -213,13 +210,12 @@ func Handler(s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 			return
 		}
 
-		msg := slack.Msg{}
+		var msg *slack.Msg
 		//if command require login than check if user logged in (have a context) if not it asks him/her to login
 		if cmd.LoginRequired() {
 			usr, _ := GetUser(session,cmd.Team_id,cmd.User_id)
 			if usr == nil{
-				composeLogin(&msg)
-				//users[cmd.User_id] = User{Name:cmd.User_name}
+				msg = ComposeLogin()
 				w.Header().Set("Content-Type", "application/json")
 				json.NewEncoder(w).Encode(msg)
 				return
