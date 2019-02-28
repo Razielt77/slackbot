@@ -12,6 +12,7 @@ import (
 )
 
 const NOT_AVAILABLE string  = "Not Available"
+const PIPELINE_LIST_COMMAND string  = "/cf-pipelines-list"
 
 func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 	var attarr []slack.Attachment
@@ -93,9 +94,11 @@ func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 
 	options = nil
 
-	if cmd.Command != ""{
-		fmt.Printf("command is:%s\n",cmd.Command)
-		options, err = ComposeOption(cmd.Command,TagFlag())
+	options_str := strings.Replace(cmd.Command,PIPELINE_LIST_COMMAND,"",1)
+
+	if options_str != ""{
+		fmt.Printf("optiosn string is:%s\n",options_str)
+		options, err = ComposeOption(options_str,TagFlag())
 
 		if err != nil {
 			fmt.Println(err)
