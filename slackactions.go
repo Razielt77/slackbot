@@ -223,7 +223,7 @@ func AskToken (callback *slack.InteractionCallback) bool {
 
 	var dlg slack.Dialog
 	dlg.TriggerID = callback.TriggerID
-	dlg.CallbackID = callback.Value
+	dlg.CallbackID = callback.CallbackID
 	dlg.Title = "Your Codefresh Token"
 	dlg.Elements = []slack.DialogElement{textElement}
 
