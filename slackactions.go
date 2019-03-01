@@ -81,6 +81,7 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 		switch intcallback.CallbackID{
 		case SWITCH_ACCOUNT:
 			SwitchAccount(session,&intcallback)
+			go slackApi.DeleteMessage(intcallback.Channel.ID,intcallback.MessageTs)
 		case ENTER_TOKEN:
 			//w.WriteHeader(http.StatusOK)
 			AskToken(&intcallback)
@@ -142,7 +143,7 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 		Text: "Welcome *"+user.CFUserName +
 			  "!*\nActive account is: *" +
 			   user.ActiveAccount +
-			  "*\nCurrently supported commands*:\n" +
+			  "*\nCurrently supported commands:\n" +
 			  "*/cf-pipelines-list*  Lists pipelines.\n"+
 			  "*/cf-pipelines-list-active*  Lists pipelines active past week.\n",
 		ThumbURL: user.Avatar}
