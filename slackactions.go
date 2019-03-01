@@ -73,7 +73,7 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, w http.
 			SetToken(s, &intcallback)
 
 		case SWITCH_ACCOUNT:
-
+			SwitchAccount(s,&intcallback)
 		}
 
 	case slack.InteractionTypeInteractionMessage:
