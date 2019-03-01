@@ -71,16 +71,17 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, w http.
 			fmt.Printf("token recieved (slack) is: %s\n",intcallback.Submission["cftoken"])
 			w.WriteHeader(http.StatusOK)
 			SetToken(s, &intcallback)
-
-		case SWITCH_ACCOUNT:
-			SwitchAccount(s,&intcallback)
 		}
 
 	case slack.InteractionTypeInteractionMessage:
 
-			w.WriteHeader(http.StatusOK)
-			AskToken(&intcallback)
-
+			switch intcallback.CallbackID{
+			case SWITCH_ACCOUNT:
+				SwitchAccount(s,&intcallback)
+			default:
+				w.WriteHeader(http.StatusOK)
+				AskToken(&intcallback)
+				}
 			}
 
 	err = json.Unmarshal([]byte(payload), r)
@@ -173,7 +174,7 @@ func SwitchAccount (s *mgo.Session, callback *slack.InteractionCallback) bool {
 	if user == nil{
 		SendSimpleText(callback.ResponseURL,"User not exist!")
 	}else{
-		user.ActiveAccount = callback.Value
+		user.ActiveAccount = callback.Actions[0].Value
 		user.SetToken(token)
 		UpdateUser(s,user)
 	}
