@@ -52,10 +52,11 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, w http.
 	}
 
 	payload := req.Form.Get("payload")
-	fmt.Printf("received payload %s\n", payload)
+	//fmt.Printf("received payload %s\n", payload)
 
 
 	intcallback := slack.InteractionCallback{}
+
 
 	err = json.Unmarshal([]byte(payload), &intcallback)
 	if err != nil {
@@ -224,7 +225,7 @@ func AskToken (callback *slack.InteractionCallback) bool {
 	var dlg slack.Dialog
 	dlg.TriggerID = callback.TriggerID
 	//storing the desired account in the state
-	dlg.State = callback.Value
+	dlg.State = callback.Actions[0].Value
 	dlg.CallbackID = callback.CallbackID
 	dlg.Title = "Your Codefresh Token"
 	dlg.Elements = []slack.DialogElement{textElement}
