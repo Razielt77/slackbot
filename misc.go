@@ -87,7 +87,7 @@ func ComposeLogin()  *slack.Msg{
 
 
 	msg := slack.Msg{}
-	msg.ResponseType = "ephemeral"
+	msg.ResponseType = "in_channel"
 	msg.Text = "*hmm...seems like you haven't logged in recently*"
 	att := slack.Attachment{
 		Title:"Fetch your Codefresh's Token",
