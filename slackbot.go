@@ -117,8 +117,9 @@ func main() {
 func HandleAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 	return func (w http.ResponseWriter, r *http.Request){
 
-		session := s.Copy()
-		defer session.Close()
+		w.WriteHeader(http.StatusOK)
+		//session := s.Copy()
+
 
 		var action slackActionMsg
 		//var rsp slackRsp
@@ -129,13 +130,13 @@ func HandleAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 		}
 
 		//extracting the command
-		err := action.ExecuteAction(session,r, w , true)
+		go action.ExecuteAction(s.Copy(),r, true)
 
-		if err != true {
+		/*if err != true {
 			fmt.Printf("Cannot execute %s", r.Body)
 			http.Error(w, "Cannot Parse", 400)
 			return
-		}
+		}*/
 
 	}
 }

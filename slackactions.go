@@ -42,8 +42,10 @@ type slackRsp struct {
 	Attachments []slack.Attachment `json:"attachments"`
 }
 
-func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, w http.ResponseWriter, log bool) bool {
+func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log bool) bool {
 
+
+	defer s.Close()
 
 	err := req.ParseForm()
 
@@ -69,7 +71,7 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, w http.
 		switch intcallback.CallbackID{
 		case ENTER_TOKEN:
 			fmt.Printf("token recieved (slack) is: %s\n",intcallback.Submission["cftoken"])
-			w.WriteHeader(http.StatusOK)
+			//w.WriteHeader(http.StatusOK)
 			SetToken(s, &intcallback)
 		}
 
@@ -81,7 +83,7 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, w http.
 		case SWITCH_ACCOUNT:
 			SwitchAccount(s,&intcallback)
 		default:
-			w.WriteHeader(http.StatusOK)
+			//w.WriteHeader(http.StatusOK)
 			AskToken(&intcallback)
 			}
 		}
