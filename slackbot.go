@@ -133,6 +133,8 @@ func HandleAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 		//extracting the command
 		action.ExecuteAction(s,r, true)
 
+
+
 		/*if err != true {
 			fmt.Printf("Cannot execute %s", r.Body)
 			http.Error(w, "Cannot Parse", 400)
