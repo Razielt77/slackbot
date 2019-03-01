@@ -93,7 +93,7 @@ func ComposeLogin()  *slack.Msg{
 		Title:"Fetch your Codefresh's Token",
 		TitleLink:"https://g.codefresh.io/account-admin/account-conf/tokens#autogen=codefresh-slack-bot",
 		Color:"#11b5a4",
-		CallbackID:"enter_token",
+		CallbackID: ENTER_TOKEN,
 		Text: "Go to your Codefresh's Accounts Settings->Tokens to fetch/create your token."}
 	att.Actions = []slack.AttachmentAction{{Name: "add-token", Text: "Enter Token", Type: "button",Style:"primary" ,Value: "start"}}
 

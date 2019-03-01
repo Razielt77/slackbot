@@ -145,29 +145,17 @@ func HandleAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 	return func (w http.ResponseWriter, r *http.Request){
 
+		w.WriteHeader(http.StatusOK)
+
+		cmd := ParseSlashCommand(w,r)
+		if cmd == nil {
+			return
+		}
+
 		session := s.Copy()
 		defer session.Close()
 
-		if r.Body == nil {
-			http.Error(w, "Please send a request body", 400)
-			return
-		}
-
-		cmd , err := slack.SlashCommandParse(r)
-
-		if err != nil {
-			fmt.Println("Cannot parse %s\n", r.Body)
-			http.Error(w, "Cannot Parse", 400)
-			return
-		}
-
-		usr, err := GetUser(session,cmd.TeamID,cmd.UserID)
-
-
-
-		w.WriteHeader(200)
-
-
+		usr, _ := GetUser(session,cmd.TeamID,cmd.UserID)
 
 		if usr == nil {
 			lgn := ComposeLogin()
@@ -175,8 +163,7 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 			return
 		}
 
-
-		go SendPipelinesListMsg(usr,&cmd)
+		go SendPipelinesListMsg(usr,cmd)
 
 		return
 

@@ -10,6 +10,11 @@ import (
 	"net/http"
 )
 
+const (
+	ENTER_TOKEN = "enter_token"
+	SWITCH_ACCOUNT = "switch_account"
+)
+
 type slackAction struct {
 	Name 			string `json:"name"`
 	Type			string `json:"type"`
@@ -52,6 +57,7 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, w http.
 
 
 	intcallback := slack.InteractionCallback{}
+
 	err = json.Unmarshal([]byte(payload), &intcallback)
 	if err != nil {
 		fmt.Println("error:", err)
@@ -61,7 +67,7 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, w http.
 	switch intcallback.Type {
 	case slack.InteractionTypeDialogSubmission:
 		switch intcallback.CallbackID{
-		case "enter_token":
+		case ENTER_TOKEN:
 			fmt.Printf("token recieved (slack) is: %s\n",intcallback.Submission["cftoken"])
 
 			w.WriteHeader(http.StatusOK)
@@ -98,10 +104,11 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 	defer session.Close()
 
 	user, err := GetUser(session,callback.Team.ID,callback.User.ID)
+	token := callback.Submission["cftoken"]
 
 	if user == nil{
 
-		token := callback.Submission["cftoken"]
+
 		user = &User{TeamID:callback.Team.ID,UserID:callback.User.ID,Name:callback.User.Name,Team:callback.Team.Name}
 
 		//retrieving user's accounts
@@ -121,6 +128,10 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 		}
 
 		AddUser(session,user)
+	}else{
+		user.ActiveAccount = callback.Value
+		user.SetToken(token)
+		UpdateUser(s,user)
 	}
 
 	text := ":white_check_mark: *Token successfully submitted!*"
