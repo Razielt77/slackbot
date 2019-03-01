@@ -118,7 +118,8 @@ func HandleAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 	return func (w http.ResponseWriter, r *http.Request){
 
 		w.WriteHeader(http.StatusOK)
-		//session := s.Copy()
+		session := s.Copy()
+		defer session.Close()
 
 
 		var action slackActionMsg
@@ -130,7 +131,7 @@ func HandleAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 		}
 
 		//extracting the command
-		go action.ExecuteAction(s.Copy(),r, true)
+		action.ExecuteAction(session,r, true)
 
 		/*if err != true {
 			fmt.Printf("Cannot execute %s", r.Body)
