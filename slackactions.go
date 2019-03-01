@@ -75,14 +75,16 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, w http.
 
 	case slack.InteractionTypeInteractionMessage:
 
-			switch intcallback.CallbackID{
-			case SWITCH_ACCOUNT:
-				SwitchAccount(s,&intcallback)
-			default:
-				w.WriteHeader(http.StatusOK)
-				AskToken(&intcallback)
-				}
+		slackApi.DeleteMessage(intcallback.Channel.ID,intcallback.MessageTs)
+
+		switch intcallback.CallbackID{
+		case SWITCH_ACCOUNT:
+			SwitchAccount(s,&intcallback)
+		default:
+			w.WriteHeader(http.StatusOK)
+			AskToken(&intcallback)
 			}
+		}
 
 	err = json.Unmarshal([]byte(payload), r)
 	if err != nil {
@@ -148,7 +150,6 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 	DoPost(callback.ResponseURL,msg)
 
 	//msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
-
 
 
 	/*_, _, err = slackApi.PostMessage(callback.Channel.ID, slack.MsgOptionText(text, false),slack.MsgOptionAttachments(att))
