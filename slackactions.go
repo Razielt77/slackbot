@@ -69,11 +69,11 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, w http.
 		switch intcallback.CallbackID{
 		case ENTER_TOKEN:
 			fmt.Printf("token recieved (slack) is: %s\n",intcallback.Submission["cftoken"])
-
 			w.WriteHeader(http.StatusOK)
+			go SetToken(s, &intcallback)
 
-			w.Header().Set("Content-Type", "application/json")
-			SetToken(s, &intcallback)
+		case SWITCH_ACCOUNT:
+
 
 		}
 
@@ -103,7 +103,7 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 	session := s.Copy()
 	defer session.Close()
 
-	user, err := GetUser(session,callback.Team.ID,callback.User.ID)
+	user, _ := GetUser(session,callback.Team.ID,callback.User.ID)
 	token := callback.Submission["cftoken"]
 
 	if user == nil{
@@ -134,7 +134,7 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 		UpdateUser(s,user)
 	}
 
-	text := ":white_check_mark: *Token successfully submitted!*"
+	msg := slack.Msg{Text: ":white_check_mark: *Token successfully submitted!*"}
 	att := slack.Attachment{
 		Color:"#11b5a4",
 		Text: "Welcome *"+user.CFUserName +
@@ -145,14 +145,20 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 			  "*/cf-pipelines-list-active*  Lists pipelines active past week.\n",
 		ThumbURL: user.Avatar}
 
+	msg.Attachments = append(msg.Attachments,att)
+
+	DoPost(callback.ResponseURL,msg)
+
 	//msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
 
-	_, _, err = slackApi.PostMessage(callback.Channel.ID, slack.MsgOptionText(text, false),slack.MsgOptionAttachments(att))
+
+
+	/*_, _, err = slackApi.PostMessage(callback.Channel.ID, slack.MsgOptionText(text, false),slack.MsgOptionAttachments(att))
 	if err != nil {
 		fmt.Printf("%s\n", err)
 		return false
 	}
-	//fmt.Printf("Message successfully sent to channel %s at %s\n", channelID, timestamp)
+	//fmt.Printf("Message successfully sent to channel %s at %s\n", channelID, timestamp)*/
 
 	return true
 }
