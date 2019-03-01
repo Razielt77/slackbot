@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/Razielt77/cf-webapi-go"
 	"github.com/nlopes/slack"
-	"github.com/nlopes/slack/slackevents"
 	"gopkg.in/mgo.v2"
 	"net/http"
 )
@@ -77,13 +76,10 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, w http.
 		}
 
 	case slack.InteractionTypeInteractionMessage:
+
+			w.WriteHeader(http.StatusOK)
 			AskToken(&intcallback)
 
-			rsp := slackevents.MessageActionResponse{ResponseType:"ephemeral",ReplaceOriginal:true,Text:"Prompting token dialog..."}
-
-
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(rsp)
 			}
 
 	err = json.Unmarshal([]byte(payload), r)
@@ -127,6 +123,7 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 		}
 
 		AddUser(session,user)
+
 	}else{
 		user.ActiveAccount = callback.Value
 		user.SetToken(token)

@@ -209,16 +209,6 @@ func Handler(s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 			fmt.Printf("User %s run command %s\n", usr.Name, cmd.Text)
 		}
 
-		/*var clicmd Cfcmd
-		if clicmd.ConstructCmd(cmd.Text){
-
-			err, ok := clicmd.RunCmd(&msg)
-			if !ok{
-				msg.Text = "Error executing command err: " + err.Error()
-			}
-		}else{
-			msg.Text = "Bad command " + cmd.Text
-		}*/
 
 
 
