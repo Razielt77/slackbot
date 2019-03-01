@@ -77,7 +77,7 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 
 	case slack.InteractionTypeInteractionMessage:
 
-		slackApi.DeleteMessage(intcallback.Channel.ID,intcallback.MessageTs)
+		//slackApi.DeleteMessage(intcallback.Channel.ID,intcallback.MessageTs)
 
 		switch intcallback.CallbackID{
 		case SWITCH_ACCOUNT:
