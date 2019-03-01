@@ -44,8 +44,8 @@ type slackRsp struct {
 
 func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log bool) bool {
 
-
-	defer s.Close()
+	session := s.Copy()
+	defer session.Close()
 
 	err := req.ParseForm()
 
@@ -81,7 +81,7 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 
 		switch intcallback.CallbackID{
 		case SWITCH_ACCOUNT:
-			SwitchAccount(s,&intcallback)
+			SwitchAccount(session,&intcallback)
 		default:
 			//w.WriteHeader(http.StatusOK)
 			AskToken(&intcallback)
