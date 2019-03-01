@@ -125,7 +125,7 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 		AddUser(session,user)
 
 	}else{
-		user.ActiveAccount = callback.Value
+		user.ActiveAccount = callback.CallbackID
 		user.SetToken(token)
 		UpdateUser(s,user)
 	}
@@ -172,7 +172,7 @@ func SwitchAccount (s *mgo.Session, callback *slack.InteractionCallback) bool {
 	if user == nil{
 		SendSimpleText(callback.ResponseURL,"User not exist!")
 	}else{
-		user.ActiveAccount = callback.Value
+		user.ActiveAccount = callback.CallbackID
 		user.SetToken(token)
 		UpdateUser(s,user)
 	}
@@ -223,7 +223,7 @@ func AskToken (callback *slack.InteractionCallback) bool {
 
 	var dlg slack.Dialog
 	dlg.TriggerID = callback.TriggerID
-	dlg.CallbackID = callback.CallbackID
+	dlg.CallbackID = callback.Value
 	dlg.Title = "Your Codefresh Token"
 	dlg.Elements = []slack.DialogElement{textElement}
 
