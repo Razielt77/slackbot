@@ -63,7 +63,7 @@ func ComposeAccountsAtt(user *User) []slack.Attachment {
 	for _, account := range user.CFAccounts{
 		att := slack.Attachment{
 			Title:account.Name,
-			Color:"#ccc"}
+			Color:"#11b5a4"}
 
 		if account.Name != user.ActiveAccount {
 			if account.Token == "" {
