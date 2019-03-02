@@ -7,6 +7,7 @@ import (
 	"github.com/nlopes/slack"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 const (
@@ -23,7 +24,6 @@ func SendSimpleText (url, message string) error {
 }
 
 func DoPost (url string, v interface{})([]byte, error){
-
 
 
 	jsn, err := json.Marshal(v)
@@ -104,4 +104,12 @@ func ComposeLogin()  *slack.Msg{
 	msg.Attachments = []slack.Attachment{att}
 
 	return &msg
+}
+
+func NormalizeCommit(commit,commit_url string)string{
+
+	commit = strings.Replace(commit,"\n"," ",-1)
+	commit = strings.Replace(commit,"\r"," ",-1)
+	commit = "<" + commit_url + "|" + commit + ">"
+	return commit
 }
