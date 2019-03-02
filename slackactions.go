@@ -132,7 +132,7 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 		AddUser(session,user)
 
 	}else{
-		fmt.Printf("Token submitted to exisiting account")
+		//fmt.Printf("Token submitted to exisiting account")
 		user.ActiveAccount = callback.State
 		user.SetToken(token)
 		UpdateUser(s,user)
@@ -166,13 +166,11 @@ func SwitchAccount (s *mgo.Session, callback *slack.InteractionCallback) bool {
 	defer session.Close()
 
 	user, _ := GetUser(session,callback.Team.ID,callback.User.ID)
-	token := callback.Submission["cftoken"]
 
 	if user == nil{
 		SendSimpleText(callback.ResponseURL,"User not exist!")
 	}else{
 		user.ActiveAccount = callback.Actions[0].Value
-		user.SetToken(token)
 		UpdateUser(s,user)
 	}
 
