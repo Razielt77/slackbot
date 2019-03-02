@@ -145,22 +145,14 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 			   user.ActiveAccount +
 			  "*\nCurrently supported commands:\n" +
 			  "*/cf-pipelines-list*  Lists pipelines.\n"+
-			  "*/cf-pipelines-list-active*  Lists pipelines active past week.\n",
+			  "*/cf-pipelines-list-active*  Lists pipelines active past week.\n" +
+			  "*/cf-switch-account* Switch between your Codefresh's accounts.\n",
 		ThumbURL: user.Avatar}
 
 	msg.Attachments = append(msg.Attachments,att)
 
 	DoPost(callback.ResponseURL,msg)
 
-	//msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
-
-
-	/*_, _, err = slackApi.PostMessage(callback.Channel.ID, slack.MsgOptionText(text, false),slack.MsgOptionAttachments(att))
-	if err != nil {
-		fmt.Printf("%s\n", err)
-		return false
-	}
-	//fmt.Printf("Message successfully sent to channel %s at %s\n", channelID, timestamp)*/
 
 	return true
 }
@@ -190,27 +182,17 @@ func SwitchAccount (s *mgo.Session, callback *slack.InteractionCallback) bool {
 			user.ActiveAccount +
 			"*\nCurrently supported commands*:\n" +
 			"*/cf-pipelines-list*  Lists pipelines.\n"+
-			"*/cf-pipelines-list-active*  Lists pipelines active past week.\n",
+			"*/cf-pipelines-list-active*  Lists pipelines active past week.\n" +
+			"*/cf-switch-account* Switch between your Codefresh's accounts.\n",
 		ThumbURL: user.Avatar}
 
 	msg.Attachments = append(msg.Attachments,att)
 
 	DoPost(callback.ResponseURL,msg)
 
-	//msg := slack.Msg{ResponseType:"ephemeral",Text:text,Attachments:[]slack.Attachment{att}}
-
-
-
-	/*_, _, err = slackApi.PostMessage(callback.Channel.ID, slack.MsgOptionText(text, false),slack.MsgOptionAttachments(att))
-	if err != nil {
-		fmt.Printf("%s\n", err)
-		return false
-	}
-	//fmt.Printf("Message successfully sent to channel %s at %s\n", channelID, timestamp)*/
 
 	return true
 }
-
 
 
 
