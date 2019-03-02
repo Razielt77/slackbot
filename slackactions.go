@@ -132,6 +132,7 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 		AddUser(session,user)
 
 	}else{
+		fmt.Printf("Token submitted to exisiting account")
 		user.ActiveAccount = callback.State
 		user.SetToken(token)
 		UpdateUser(s,user)
