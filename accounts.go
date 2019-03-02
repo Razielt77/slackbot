@@ -49,6 +49,7 @@ func SendAccountsList(usr *User, cmd *slack.SlashCommand){
 
 
 	accountsMsg.Attachments = ComposeAccountsAtt(usr)
+	accountsMsg.ResponseType = IN_CHANNEL
 
 
 	_, err = DoPost(cmd.ResponseURL,accountsMsg)
@@ -69,13 +70,14 @@ func ComposeAccountsAtt(user *User) []slack.Attachment {
 			att.Color = "#ccc"
 			if account.Token == "" {
 				att.CallbackID = ENTER_TOKEN
+				att.Text = "Token required for this account"
 				att.Actions = []slack.AttachmentAction{{Name:  "add-token",
 														Text:  "Add Token",
 														Type:  "button",
-														Style: "primary" ,
 														Value: account.Name}}
 			}else{
 				att.CallbackID = SWITCH_ACCOUNT
+				att.Text = "Token exists for this account"
 				att.Actions = []slack.AttachmentAction{{Name:  "add-token",
 					Text:  "Set Active",
 					Type:  "button",

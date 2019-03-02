@@ -183,7 +183,7 @@ func SwitchAccount (s *mgo.Session, callback *slack.InteractionCallback) bool {
 		UpdateUser(s,user)
 	}
 
-	msg := slack.Msg{Text: ":white_check_mark: *Token successfully submitted!*"}
+	msg := slack.Msg{Text: ":white_check_mark: *Account switch successfully!*"}
 	att := slack.Attachment{
 		Color:"#11b5a4",
 		Text: "Active account is: *" +

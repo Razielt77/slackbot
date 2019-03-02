@@ -9,10 +9,14 @@ import (
 	"net/http"
 )
 
+const (
+	IN_CHANNEL = "in_channel"
+)
+
 func SendSimpleText (url, message string) error {
 
 	msg := slack.Msg{}
-	msg.ResponseType = "in_channel"
+	msg.ResponseType = IN_CHANNEL
 	msg.Text = message
 	_, err := DoPost(url,msg)
 	return err
@@ -87,7 +91,7 @@ func ComposeLogin()  *slack.Msg{
 
 
 	msg := slack.Msg{}
-	msg.ResponseType = "in_channel"
+	msg.ResponseType = IN_CHANNEL
 	msg.Text = "*hmm...seems like you haven't logged in recently*"
 	att := slack.Attachment{
 		Title:"Fetch your Codefresh's Token",
