@@ -69,6 +69,8 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 
 			commit := "<" + pipeline.LastWorkflow.CommitUrl + "|" + pipeline.LastWorkflow.CommitMsg + ">"
 			commit = strings.Replace(commit,"\n"," ",-1)
+			commit = strings.Replace(commit,"\r"," ",-1)
+
 			p_att.Fields = append(p_att.Fields,
 				slack.AttachmentField{Title:"Last Status", Value:pipeline.LastWorkflow.Status, Short:true},
 				slack.AttachmentField{Title:"Duration", Value: duration , Short:true},
