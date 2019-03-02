@@ -13,7 +13,7 @@ import (
 
 const NOT_AVAILABLE string  = "Not Available"
 const ACTIVE_PIPELINE_COMMAND string  = "/cf-pipelines-list-active"
-const ACTIVE_DURATION_IN_HOURS float64  = 168
+const ACTIVE_DURATION_IN_HOURS float64  = 72
 
 
 type Flag func() (string, webapi.OptionGen)
