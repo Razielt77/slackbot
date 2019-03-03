@@ -136,6 +136,20 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 
 	}else{
 		//fmt.Printf("Token submitted to exisiting account")
+
+		//checking that tken is valid
+		cf_user, err := webapi.New(token).UserInfo()
+
+		if err != nil {
+			SendSimpleText(callback.ResponseURL,":heavy_exclamation_mark: *Invalid token*: "+ err.Error())
+			return false
+		}
+
+		if(cf_user.ActiveAccount != callback.State){
+			SendSimpleText(callback.ResponseURL,":heavy_exclamation_mark: *Invalid token*: Token doesn't match with selected account")
+			return false
+		}
+
 		user.ActiveAccount = callback.State
 		user.SetToken(token)
 		UpdateUser(s,user)
