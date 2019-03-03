@@ -118,7 +118,7 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 		cf_user, err := webapi.New(token).UserInfo()
 
 		if err != nil {
-			SendSimpleText(callback.ResponseURL,"Invalid token: "+ err.Error())
+			SendSimpleText(callback.ResponseURL,":heavy_exclamation_mark: *Invalid token*: "+ err.Error())
 			return false
 		}
 
