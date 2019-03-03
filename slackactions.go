@@ -117,7 +117,10 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 
 		cf_user, err := webapi.New(token).UserInfo()
 
-		if err != nil {return false}
+		if err != nil {
+			SendSimpleText(callback.ResponseURL,"Invalid token: "+ err.Error())
+			return false
+		}
 
 		user.CFUserName = cf_user.Name
 		user.CFAccounts = cf_user.Accounts
