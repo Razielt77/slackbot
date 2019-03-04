@@ -66,6 +66,7 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 		return false
 	}
 
+	fmt.Printf("Type is: %s\nCallback ID is: %s\n",intcallback.Type,intcallback.CallbackID)
 	switch intcallback.Type {
 	case slack.InteractionTypeDialogSubmission:
 		switch intcallback.CallbackID{
