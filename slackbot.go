@@ -43,11 +43,11 @@ func main() {
 
 	session.SetMode(mgo.Monotonic, true)
 
-	db := session.DB(Mongo_DB)
+	/*db := session.DB(Mongo_DB)
 	err = db.DropDatabase()
 	if err != nil {
 		fmt.Printf("cannot drop %s\n",err)
-	}
+	}*/
 
 	ensureIndex(session)
 
