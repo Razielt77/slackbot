@@ -11,9 +11,14 @@ import (
 	"time"
 )
 
-const NOT_AVAILABLE string  = "Not Available"
-const ACTIVE_PIPELINE_COMMAND string  = "/cf-pipelines-list-active"
-const ACTIVE_DURATION_IN_HOURS float64  = 72
+
+const (
+	NOT_AVAILABLE string  = "Not Available"
+	ACTIVE_PIPELINE_COMMAND string  = "/cf-pipelines-list-active"
+	ACTIVE_DURATION_IN_HOURS float64  = 72
+	PIPELINE_ACTION = "pipeline_action"
+	VIEW_BUILDS = "view_builds"
+)
 
 
 type Flag func() (string, webapi.OptionGen)
@@ -83,6 +88,9 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 			p_att.AuthorName= pipeline.LastWorkflow.Committer
 		}
 
+		p_att.CallbackID = PIPELINE_ACTION
+
+		p_att.Actions = []slack.AttachmentAction{{Name: VIEW_BUILDS, Text: "View Builds", Type: "button",Style:"primary" ,Value: pipeline.ID}}
 
 		attarr = append(attarr, p_att)
 	}
@@ -131,6 +139,8 @@ func SendPipelinesListMsg(usr *User, cmd *slack.SlashCommand){
 	if cmd.Command == ACTIVE_PIPELINE_COMMAND{
 		pipelines = FilterNonActivePipeline(pipelines)
 	}
+
+	pipelinesMsg.ResponseType = IN_CHANNEL
 
 	pipelinesMsg.Text = "*No Pipelines found*"
 
