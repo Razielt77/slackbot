@@ -66,7 +66,7 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 		return false
 	}
 
-	fmt.Printf("Type is: %s\nCallback ID is: %s\n",intcallback.Type,intcallback.CallbackID)
+
 	switch intcallback.Type {
 	case slack.InteractionTypeDialogSubmission:
 		switch intcallback.CallbackID{
@@ -78,21 +78,21 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 
 	case slack.InteractionTypeInteractionMessage:
 
+		fmt.Printf("Type is: %s\nCallback ID is: %s\n",intcallback.Type,intcallback.CallbackID)
 
-		switch intcallback.CallbackID{
+		switch intcallback.CallbackID {
 		case SWITCH_ACCOUNT:
-			SwitchAccount(session,&intcallback)
-			go slackApi.DeleteMessage(intcallback.Channel.ID,intcallback.MessageTs)
+			SwitchAccount(session, &intcallback)
+			go slackApi.DeleteMessage(intcallback.Channel.ID, intcallback.MessageTs)
 		case ENTER_TOKEN:
 			//w.WriteHeader(http.StatusOK)
 			AskToken(&intcallback)
-			go slackApi.DeleteMessage(intcallback.Channel.ID,intcallback.MessageTs)
-			}
+			go slackApi.DeleteMessage(intcallback.Channel.ID, intcallback.MessageTs)
 		case PIPELINE_ACTION:
-			fmt.Printf("got here safely ;)\n Name is: %s",intcallback.Actions[0].Name)
-			switch intcallback.Actions[0].Name{
-				case VIEW_BUILDS:
-					SendSimpleText(intcallback.ResponseURL,"Asking to view builds for " + intcallback.Actions[0].Value)
+			switch intcallback.Actions[0].Name {
+			case VIEW_BUILDS:
+				SendSimpleText(intcallback.ResponseURL, "Asking to view builds for "+intcallback.Actions[0].Value)
+				}
 			}
 		}
 
