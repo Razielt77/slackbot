@@ -73,6 +73,11 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 			fmt.Printf("token recieved (slack) is: %s\n",intcallback.Submission["cftoken"])
 			//w.WriteHeader(http.StatusOK)
 			SetToken(s, &intcallback)
+		case PIPELINE_ACTION:
+			switch intcallback.Actions[0].Name{
+			case VIEW_BUILDS:
+				SendSimpleText(intcallback.ResponseURL,"Asking to view builds for " + intcallback.Actions[0].Value)
+			}
 		}
 
 	case slack.InteractionTypeInteractionMessage:
