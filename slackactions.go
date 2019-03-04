@@ -88,6 +88,7 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 			go slackApi.DeleteMessage(intcallback.Channel.ID,intcallback.MessageTs)
 			}
 		case PIPELINE_ACTION:
+			fmt.Printf("got here safely ;)\n Name is: %s",intcallback.Actions[0].Name)
 			switch intcallback.Actions[0].Name{
 				case VIEW_BUILDS:
 					SendSimpleText(intcallback.ResponseURL,"Asking to view builds for " + intcallback.Actions[0].Value)
