@@ -17,6 +17,7 @@ const (
 
 func SendPipelinesWorkflow(s *mgo.Session, intcallback *slack.InteractionCallback){
 
+	go slackApi.DeleteMessage(intcallback.Channel.ID, intcallback.MessageTs)
 
 	if SendSimpleText(intcallback.ResponseURL,"Retrieving Workflow...") != nil {
 		fmt.Printf("Cannot send message\n")
@@ -44,6 +45,12 @@ func SendPipelinesWorkflow(s *mgo.Session, intcallback *slack.InteractionCallbac
 
 	cfclient := webapi.New(token)
 	pipeline_id := intcallback.Actions[0].Value
+	pipline_arr, _ := cfclient.PipelinesList(webapi.OptionID(pipeline_id))
+
+	if len(pipline_arr) != 1{
+		SendSimpleText(intcallback.ResponseURL,"Internal error: cant get pipeline...")
+		return
+	}
 	cf_workflows, _ := cfclient.WorkflowList(webapi.OptionLimit("5"),webapi.OptionPipelineID(pipeline_id))
 
 	workflowsMsg := slack.Msg{}
@@ -54,7 +61,10 @@ func SendPipelinesWorkflow(s *mgo.Session, intcallback *slack.InteractionCallbac
 
 	if len(cf_workflows) > 0 && err == nil{
 
-		workflowsMsg.Text = "*Showing last " + strconv.Itoa(len(cf_workflows)) + " builds*"
+		workflowsMsg.Text = "Showing last " +
+			strconv.Itoa(len(cf_workflows)) +
+			" builds for pipeline: *" + pipline_arr[0].Name +
+			"*"
 		workflowsMsg.Attachments = ComposeWorkflowAtt(cf_workflows)
 	}
 
