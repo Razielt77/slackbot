@@ -91,7 +91,7 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 		case PIPELINE_ACTION:
 			switch intcallback.Actions[0].Name {
 			case VIEW_BUILDS:
-				go SendPipelinesWorkflow(s,intcallback)
+				go SendPipelinesWorkflow(s,&intcallback)
 				//SendSimpleText(intcallback.ResponseURL, "Asking to view builds for "+intcallback.Actions[0].Value)
 				}
 			}

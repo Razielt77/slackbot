@@ -15,7 +15,7 @@ const (
 	BUILD_URL 			= 	"https://g.codefresh.io/build/"
 )
 
-func SendPipelinesWorkflow(s *mgo.Session, intcallback slack.InteractionCallback){
+func SendPipelinesWorkflow(s *mgo.Session, intcallback *slack.InteractionCallback){
 
 
 	if SendSimpleText(intcallback.ResponseURL,"Retrieving Workflow...") != nil {
