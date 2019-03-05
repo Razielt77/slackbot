@@ -60,10 +60,10 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 
 			//p_att.Ts = json.Number(t_finish.Unix())
 			switch pipeline.LastWorkflow.Status{
-			case "success":
+			case WORKFLOW_SUCCESS:
 				p_att.FooterIcon = `https://raw.githubusercontent.com/Razielt77/slackbot/master/img/passed.png`
 				p_att.Color="#11b5a4"
-			case "error":
+			case WORKFLOW_FAIL:
 				p_att.FooterIcon = `https://raw.githubusercontent.com/Razielt77/slackbot/master/img/failed.png`
 				p_att.Color ="#e83f43"
 			default:
