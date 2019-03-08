@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nlopes/slack"
+	"github.com/nlopes/slack/slackevents"
 	"gopkg.in/mgo.v2"
 	"log"
 	"net/http"
@@ -107,13 +109,30 @@ func HandleEvent (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 		}
 
 
-		r.ParseForm()
-		body := r.Form.Get("body")
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(r.Body)
+		body := buf.String()
+		eventsAPIEvent, e := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: "TOKEN"}))
+		if e != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+		if eventsAPIEvent.Type == slackevents.URLVerification {
+			var r *slackevents.ChallengeResponse
+			err := json.Unmarshal([]byte(body), &r)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+			w.Header().Set("Content-Type", "text")
+			w.Write([]byte(r.Challenge))
+		}
+		if eventsAPIEvent.Type == slackevents.CallbackEvent {
+			innerEvent := eventsAPIEvent.InnerEvent
+			switch ev := innerEvent.Data.(type) {
+			case *slackevents.AppMentionEvent:
+				slackApi.PostMessage(ev.Channel, slack.MsgOptionText("Yes, hello.", false))
+			}
+		}
 
-
-		fmt.Printf("here is the challenge:%s\n",body)
-
-		w.Write([]byte("shalom"))
 
 
 	}
