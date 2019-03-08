@@ -95,7 +95,6 @@ func HandleAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 func HandleEvent (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 	return func (w http.ResponseWriter, r *http.Request){
 
-		w.WriteHeader(http.StatusOK)
 		session := s.Copy()
 		defer session.Close()
 
@@ -113,7 +112,8 @@ func HandleEvent (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 
 		fmt.Printf("Body: %s\n",body)
 
-		eventsAPIEvent, e := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: "TOKEN"}))
+		eventsAPIEvent, e := slackevents.ParseEvent(json.RawMessage(body))
+
 		if e != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
@@ -136,8 +136,6 @@ func HandleEvent (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 				slackApi.PostMessage(ev.Channel, slack.MsgOptionText("Yes, hello.", false))
 			}
 		}
-
-
 
 	}
 }
