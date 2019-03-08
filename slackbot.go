@@ -106,17 +106,14 @@ func HandleEvent (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 			fmt.Printf("Body: %s\n",r.Body)
 		}
 
-		err := r.ParseForm()
 
-		if err != nil {
-			return
-		}
+		r.ParseForm()
+		body := r.Form.Get("body")
 
-		challenge := r.Form.Get("challenge")
 
-		fmt.Printf("here is the challenge:%s\n",challenge)
+		fmt.Printf("here is the challenge:%s\n",body)
 
-		w.Write([]byte(challenge))
+		w.Write([]byte("shalom"))
 
 
 	}
