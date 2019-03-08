@@ -102,6 +102,8 @@ func HandleEvent (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 		if r.Body == nil {
 			http.Error(w, "Please send a request body", 400)
 			return
+		}else{
+			fmt.Printf("Body: %s\n",r.Body)
 		}
 
 		err := r.ParseForm()
