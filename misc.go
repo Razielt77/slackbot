@@ -14,6 +14,13 @@ const (
 	IN_CHANNEL = "in_channel"
 )
 
+
+type slackEventVerification struct {
+	Type    		string      `json:"type"`
+	Token  			string      `json:"token"`
+	Challenge   	string      `json:"challenge"`
+
+}
 func SendSimpleText (url, message string) error {
 
 	msg := slack.Msg{}

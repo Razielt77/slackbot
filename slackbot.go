@@ -116,9 +116,15 @@ func HandleEvent (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 
 		if e != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Printf("Parsing error: %s\n",e.Error())
 		}
 
-		fmt.Printf("Type: %s\n",eventsAPIEvent.Type)
+		event := &slackEventVerification{}
+		json.Unmarshal([]byte(body),event)
+
+
+		fmt.Printf("Type: %s\n",event.Type)
+		fmt.Printf("Challenge: %s\n",event.Challenge)
 
 		if eventsAPIEvent.Type == slackevents.URLVerification {
 			var r *slackevents.ChallengeResponse
