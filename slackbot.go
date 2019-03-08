@@ -112,7 +112,8 @@ func HandleEvent (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 
 		fmt.Printf("Body: %s\n",body)
 
-		eventsAPIEvent, e := slackevents.ParseEvent(json.RawMessage(body))
+		eventsAPIEvent, e := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: access_token}))
+		//eventsAPIEvent, e := slackevents.ParseEvent(json.RawMessage(body))
 
 		if e != nil {
 			w.WriteHeader(http.StatusInternalServerError)
