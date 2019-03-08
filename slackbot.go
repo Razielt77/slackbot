@@ -112,6 +112,8 @@ func HandleEvent (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 
 		challenge := r.Form.Get("challenge")
 
+		fmt.Fprintf("here is the challenge:%s\n",challenge)
+
 		w.Write([]byte(challenge))
 
 
