@@ -16,10 +16,13 @@ import (
 const (
 	NOT_FOUND = "not found"
 	SLACK_TOKEN_ENV_NAME = "TOKEN"
-	MONGO_URL_RNV_NAME = "MONGO"
+	MONGO_URL_ENV_NAME = "MONGO"
+	SLACK_VER_ENV_NAME = "VER_TOKEN"
 )
 
+
 var access_token string = ""
+var ver_token string = ""
 
 
 
@@ -34,7 +37,8 @@ func main() {
 
 	//retrieving the slack web api token from the environment variable
 	access_token = os.Getenv(SLACK_TOKEN_ENV_NAME)
-	mongo_url := os.Getenv(MONGO_URL_RNV_NAME)
+	ver_token = os.Getenv(SLACK_VER_ENV_NAME)
+	mongo_url := os.Getenv(MONGO_URL_ENV_NAME)
 
 	if mongo_url == "" {
 		mongo_url = "localhost"
@@ -112,15 +116,15 @@ func HandleEvent (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 
 		fmt.Printf("Body: %s\n",body)
 
-		eventsAPIEvent, _ := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: access_token}))
+		eventsAPIEvent, e := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: ver_token}))
 		//eventsAPIEvent, e := slackevents.ParseEvent(json.RawMessage(body))
 
-		/*if e != nil {
+		if e != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Printf("Parsing error: %s\n",e.Error())
-		}*/
+		}
 
-		event := &slackEventVerification{}
+		/*event := &slackEventVerification{}
 		json.Unmarshal([]byte(body),event)
 
 
@@ -130,7 +134,7 @@ func HandleEvent (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 		fmt.Printf("Challenge: %s\n",event.Challenge)
 
 		w.Header().Set("Content-Type", "text")
-		w.Write([]byte(event.Challenge))
+		w.Write([]byte(event.Challenge))*/
 
 		if eventsAPIEvent.Type == slackevents.URLVerification {
 			var r *slackevents.ChallengeResponse
