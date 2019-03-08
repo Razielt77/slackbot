@@ -11,7 +11,11 @@ import (
 	"os"
 )
 
-const NOT_FOUND = "not found"
+const (
+	NOT_FOUND = "not found"
+	SLACK_TOKEN_ENV_NAME = "TOKEN"
+	MONGO_URL_RNV_NAME = "MONGO"
+)
 
 var access_token string = ""
 
@@ -27,14 +31,13 @@ func main() {
 	fmt.Printf("Welcome to Codefresh Slackbot\n")
 
 	//retrieving the slack web api token from the environment variable
-	access_token = os.Getenv("TOKEN")
-	mongo_url := os.Getenv("MONGO")
+	access_token = os.Getenv(SLACK_TOKEN_ENV_NAME)
+	mongo_url := os.Getenv(MONGO_URL_RNV_NAME)
 
 	if mongo_url == "" {
 		mongo_url = "localhost"
 	}
 
-	fmt.Printf("connecting o to %s\n",mongo_url)
 	session, err := mgo.Dial(mongo_url)
 	if err != nil {
 		panic(err)
@@ -51,57 +54,7 @@ func main() {
 
 	ensureIndex(session)
 
-	/*user := User{TeamID:"2",UserID:"1",Name:"Raziel",Team:"Codefresh",CFTokens:[]CodefreshToken{{AccountName:`Codefresh-inc`, Token:`1111`},{AccountName:`Razielt77`,Token:`2222`}}}
-
-	AddUser(session,&user)
-
-	user2, err := GetUser(session,"2", "1")
-
-	if user2 == nil{
-		if err.Error() == NOT_FOUND {
-			fmt.Printf("User not found\n")
-		}else{
-			fmt.Printf("Database Error: %s\n", err)
-		}
-
-	}else{
-		fmt.Printf("User Found\nName: %v\n",user2.Name)
-		for _, s := range user2.CFTokens{
-			fmt.Printf("Account Name: %v\n",s.AccountName)
-		}
-	}
-
-	user2.CFTokens = append(user.CFTokens,CodefreshToken{AccountName:"Dustin",Token:"4444"})
-
-	UpdateUser(session,user2)
-
-
-	user3, err := GetUser(session,"2", "1")
-
-	if user3 == nil{
-		if err.Error() == NOT_FOUND {
-			fmt.Printf("User not found\n")
-		}else{
-			fmt.Printf("Database Error: %s\n", err)
-		}
-
-	}else{
-		fmt.Printf("User Found\nName: %v\n",user3.Name)
-		for _, s := range user3.CFTokens{
-			fmt.Printf("Account Name: %v\n",s.AccountName)
-		}
-	}
-
-	if access_token == "" || access_token == "not_set" {
-		fmt.Printf("WARNING: no access token set value is:%s\n", access_token)
-	} else {
-		fmt.Printf("Token set is:%s\n", access_token)
-
-	}*/
-
-
 	slackApi = slack.New(access_token)
-
 
 
 	router := mux.NewRouter().StrictSlash(true)
@@ -109,6 +62,7 @@ func main() {
 	router.HandleFunc("/action", HandleAction(session))
 	router.HandleFunc("/accountchange", AccountChangeCommand(session))
 	router.HandleFunc("/pipelineslist", PipelineListAction(session))
+	router.HandleFunc("/events", HandleEvent(session))
 	log.Fatal(http.ListenAndServe(":8080", router))
 
 }
@@ -120,7 +74,6 @@ func HandleAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusOK)
 		session := s.Copy()
 		defer session.Close()
-
 
 		var action slackActionMsg
 		//var rsp slackRsp
@@ -134,16 +87,36 @@ func HandleAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 		action.ExecuteAction(s,r, true)
 
 
-
-		/*if err != true {
-			fmt.Printf("Cannot execute %s", r.Body)
-			http.Error(w, "Cannot Parse", 400)
-			return
-		}*/
-
 	}
 }
 
+func HandleEvent (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
+	return func (w http.ResponseWriter, r *http.Request){
+
+		w.WriteHeader(http.StatusOK)
+		session := s.Copy()
+		defer session.Close()
+
+
+
+		if r.Body == nil {
+			http.Error(w, "Please send a request body", 400)
+			return
+		}
+
+		err := r.ParseForm()
+
+		if err != nil {
+			return
+		}
+
+		challenge := r.Form.Get("challenge")
+
+		w.Write([]byte(challenge))
+
+
+	}
+}
 
 
 func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
@@ -189,6 +162,7 @@ func Handler(s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 			http.Error(w, "Please send a request body", 400)
 			return
 		}
+
 
 
 		//extracting the command
