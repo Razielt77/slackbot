@@ -150,6 +150,10 @@ func HandleEvent (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 			switch ev := innerEvent.Data.(type) {
 			case *slackevents.AppMentionEvent:
 				slackApi.PostMessage(ev.Channel, slack.MsgOptionText("Yes, hello.", false))
+			case *slackevents.LinkSharedEvent:
+
+				fmt.Printf("here is the link %s\n",ev.Links[0].URL)
+				slackApi.PostMessage(ev.Channel, slack.MsgOptionText("Yes, hello.", false))
 			}
 		}
 
