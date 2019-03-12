@@ -172,7 +172,7 @@ func ComposeWorkflowAttachment(workflow *webapi.Workflow) *slack.Attachment{
 	att.Fields = append(att.Fields,field)
 
 	start,duration := ExtractStartAndDuration(workflow.CreatedTS,workflow.FinishedTS)
-	field := slack.AttachmentField{
+	field = slack.AttachmentField{
 		Title: "Start Time",
 		Value: "<!date^" + start + "^{date} at {time}|Not Set>",
 		Short:	true}
