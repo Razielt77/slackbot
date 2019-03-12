@@ -7,6 +7,10 @@ import (
 	"net/http"
 )
 
+const (
+	FIRST_TIME_USER = "It seems like you never added a Codefresh's token. Please add your account's token."
+)
+
 func AccountChangeCommand (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 	return func (w http.ResponseWriter, r *http.Request){
 
@@ -25,7 +29,7 @@ func AccountChangeCommand (s *mgo.Session) func(w http.ResponseWriter, r *http.R
 
 		if usr == nil {
 
-			go DoPost(cmd.ResponseURL, ComposeLogin())
+			go DoPost(cmd.ResponseURL, ComposeLogin(FIRST_TIME_USER))
 			return
 		}
 

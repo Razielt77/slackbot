@@ -84,6 +84,8 @@ func EnrichSharedLink(s *mgo.Session, team_id string, event *slackevents.LinkSha
 
 	session := s.Copy()
 	defer session.Close()
+	m := make(map[string]slack.Attachment)
+	var att *slack.Attachment
 
 	url := event.Links[0].URL
 	build := ExtractBuildFromURL(url)
@@ -101,19 +103,23 @@ func EnrichSharedLink(s *mgo.Session, team_id string, event *slackevents.LinkSha
 	}
 
 	if usr == nil {
-		// TODO: implement message for user to add token
+		att = ComposeLoginAttacment("Add Codefresh's token for enriched link messages")
+		m[event.Links[0].URL] = *att
+		slackApi.UnfurlMessage(event.Channel,event.MessageTimeStamp.String(),m)
 		return
 	}
 
 	workflow := GetWorkflowInfo(build,usr)
 
 	if workflow == nil {
-		// TODO: implement message for user to add token for the url's account
+		att = ComposeLoginAttacment("Token for this account wan't submitted. Add Token to view enriched link for this account")
+		m[event.Links[0].URL] = *att
+		slackApi.UnfurlMessage(event.Channel,event.MessageTimeStamp.String(),m)
 		return
 	}
 
-	att := ComposeWorkflowAttachment(workflow)
-	m := make(map[string]slack.Attachment)
+	att = ComposeWorkflowAttachment(workflow)
+
 	m[event.Links[0].URL] = *att
 
 	slackApi.UnfurlMessage(event.Channel,event.MessageTimeStamp.String(),m)

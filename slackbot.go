@@ -52,11 +52,11 @@ func main() {
 
 	session.SetMode(mgo.Monotonic, true)
 
-	/*db := session.DB(Mongo_DB)
+	db := session.DB(Mongo_DB)
 	err = db.DropDatabase()
 	if err != nil {
 		fmt.Printf("cannot drop %s\n",err)
-	}*/
+	}
 
 	ensureIndex(session)
 
@@ -124,17 +124,6 @@ func HandleEvent (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 			fmt.Printf("Parsing error: %s\n",e.Error())
 		}
 
-		/*event := &slackEventVerification{}
-		json.Unmarshal([]byte(body),event)
-
-
-
-		fmt.Printf("Type: %s\n",event.Type)
-		fmt.Printf("Token: %s\n",event.Token)
-		fmt.Printf("Challenge: %s\n",event.Challenge)
-
-		w.Header().Set("Content-Type", "text")
-		w.Write([]byte(event.Challenge))*/
 
 		if eventsAPIEvent.Type == slackevents.URLVerification {
 			var r *slackevents.ChallengeResponse
@@ -178,7 +167,7 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 		usr, _ := GetUser(session,cmd.TeamID,cmd.UserID)
 
 		if usr == nil {
-			lgn := ComposeLogin()
+			lgn := ComposeLogin(FIRST_TIME_USER)
 			go DoPost(cmd.ResponseURL,lgn)
 			return
 		}
@@ -222,7 +211,7 @@ func Handler(s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 		if cmd.LoginRequired() {
 			usr, _ := GetUser(session,cmd.Team_id,cmd.User_id)
 			if usr == nil{
-				msg = ComposeLogin()
+				msg = ComposeLogin(FIRST_TIME_USER)
 				w.Header().Set("Content-Type", "application/json")
 				json.NewEncoder(w).Encode(msg)
 				return

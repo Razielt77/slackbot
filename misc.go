@@ -15,12 +15,7 @@ const (
 )
 
 
-type slackEventVerification struct {
-	Type    		string      `json:"type"`
-	Token  			string      `json:"token"`
-	Challenge   	string      `json:"challenge"`
 
-}
 func SendSimpleText (url, message string) error {
 
 	msg := slack.Msg{}
@@ -53,7 +48,6 @@ func DoPost (url string, v interface{})([]byte, error){
 
 	client := &http.Client{}
 
-	//req.Header.Add("Authorization", string("Bearer " + c.token))
 
 	resp, err := client.Do(req)
 
@@ -94,23 +88,30 @@ func ParseSlashCommand(w http.ResponseWriter, r *http.Request) *slack.SlashComma
 }
 
 
-func ComposeLogin()  *slack.Msg{
+func ComposeLogin(txt string)  *slack.Msg{
 
 
 	msg := slack.Msg{}
 	msg.ResponseType = IN_CHANNEL
-	msg.Text = "*hmm...seems like you haven't logged in recently*"
-	att := slack.Attachment{
-		Title:"Fetch your Codefresh's Token",
+	//msg.Text = "*hmm...seems like you haven't logged in recently*"
+	msg.Text = txt
+	msg.Attachments = []slack.Attachment{*ComposeLoginAttacment()}
+
+	return &msg
+}
+
+func ComposeLoginAttacment(msg ...string) *slack.Attachment{
+	att := &slack.Attachment{
+		Title:"Add your Codefresh's Account Token",
 		TitleLink:"https://g.codefresh.io/account-admin/account-conf/tokens#autogen=codefresh-slack-bot",
 		Color:"#11b5a4",
 		CallbackID: ENTER_TOKEN,
-		Text: "Go to your Codefresh's Accounts Settings->Tokens to fetch/create your token."}
+		Text: "Go to your Codefresh's Accounts Settings->Tokens to create your token."}
+	if len(msg) == 1{
+		att.Title = msg[0]
+	}
 	att.Actions = []slack.AttachmentAction{{Name: "add-token", Text: "Enter Token", Type: "button",Style:"primary" ,Value: "start"}}
-
-	msg.Attachments = []slack.Attachment{att}
-
-	return &msg
+	return att
 }
 
 func NormalizeCommit(commit,commit_url string)string{
