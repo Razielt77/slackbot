@@ -209,12 +209,19 @@ func ComposeWorkflowAttachment(workflow *webapi.Workflow) *slack.Attachment{
 
 	att.Fields = append(att.Fields,field)
 
-	/*field = slack.AttachmentField{
+	field = slack.AttachmentField{
+		Title: "Branch",
+		Value: workflow.Branch,
+		Short: true}
+
+	att.Fields = append(att.Fields,field)
+
+	field = slack.AttachmentField{
 		Title: "SHA",
 		Value: workflow.SHA,
 		Short: true}
 
-	att.Fields = append(att.Fields,field)*/
+	att.Fields = append(att.Fields,field)
 
 	action := slack.AttachmentAction{
 		Text: "Build's logs :spiral_note_pad:",
