@@ -219,7 +219,7 @@ func ComposeWorkflowAttachment(workflow *webapi.Workflow) *slack.Attachment{
 	field = slack.AttachmentField{
 		Title: "SHA",
 		Value: workflow.SHA,
-		Short: true}
+		Short: false}
 
 	att.Fields = append(att.Fields,field)
 
