@@ -162,6 +162,8 @@ func ComposeWorkflowAttachment(workflow *webapi.Workflow) *slack.Attachment{
 
 	att := &slack.Attachment{ThumbURL: workflow.Avatar}
 
+	att.Title = `*` +NormalizeCommit(workflow.CommitMsg,workflow.CommitUrl) + `*`
+
 	field := slack.AttachmentField{
 		Title: "Commit",
 		Value: NormalizeCommit(workflow.CommitMsg,workflow.CommitUrl),
@@ -207,6 +209,13 @@ func ComposeWorkflowAttachment(workflow *webapi.Workflow) *slack.Attachment{
 
 	att.Fields = append(att.Fields,field)
 
+	/*field = slack.AttachmentField{
+		Title: "SHA",
+		Value: workflow.SHA,
+		Short: true}
+
+	att.Fields = append(att.Fields,field)*/
+
 	action := slack.AttachmentAction{
 		Text: "Build's logs :spiral_note_pad:",
 		URL: BUILD_URL+workflow.ID,
@@ -238,14 +247,6 @@ func ExtractStartAndDuration(start,finish string) (string, string){
 
 }
 
-/*type Workflow struct {
-	Status string `json:"status"`
-	CreatedTS 	string `json:"created"`
-	FinishedTS  string `json:"finished"`
-	Committer 	string `json:"userName"`
-	CommitMsg 	string `json:"commitMessage"`
-	CommitUrl 	string `json:"commitURL"`
-	Avatar 		string `json:"avatar"`
-}*/
+
 
 
