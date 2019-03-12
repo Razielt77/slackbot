@@ -162,17 +162,10 @@ func ComposeWorkflowAttachment(workflow *webapi.Workflow) *slack.Attachment{
 
 	att := &slack.Attachment{ThumbURL: workflow.Avatar}
 
-	att.Title = `*` +NormalizeCommit(workflow.CommitMsg,workflow.CommitUrl) + `*`
-
-	field := slack.AttachmentField{
-		Title: "Commit",
-		Value: NormalizeCommit(workflow.CommitMsg,workflow.CommitUrl),
-		Short: false}
-
-	att.Fields = append(att.Fields,field)
+	att.Title = NormalizeCommit(workflow.CommitMsg,workflow.CommitUrl)
 
 	start,duration := ExtractStartAndDuration(workflow.CreatedTS,workflow.FinishedTS)
-	field = slack.AttachmentField{
+	field := slack.AttachmentField{
 		Title: "Start Time",
 		Value: "<!date^" + start + "^{date} at {time}|Not Set>",
 		Short:	true}
