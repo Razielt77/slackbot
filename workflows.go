@@ -95,12 +95,8 @@ func EnrichSharedLink(s *mgo.Session, team_id string, event *slackevents.LinkSha
 	}
 
 	//retrieving user
-	usr, err := GetUser(session,team_id,event.User)
+	usr, _ := GetUser(session,team_id,event.User)
 
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
 
 	if usr == nil {
 		att = ComposeLoginAttacment("Add Codefresh's token for enriched link messages")
