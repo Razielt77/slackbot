@@ -50,12 +50,20 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 				fmt.Println(err)
 			}
 
-			t_finish, err := time.Parse(time.RFC3339, pipeline.LastWorkflow.FinishedTS)
-			if err != nil {
-				fmt.Println(err)
+			var t_finish time.Time
+
+			if pipeline.LastWorkflow.Status != WORKFLOW_RUNNING{
+				t_finish, err = time.Parse(time.RFC3339, pipeline.LastWorkflow.FinishedTS)
+				if err != nil {
+					fmt.Println(err)
+				}
+			}else{
+				t_finish = time.Now()
 			}
+
 			duration_t := t_finish.Sub(t_start)
 			duration := strconv.Itoa(int (duration_t.Minutes())) + " minutes."
+
 
 
 			//p_att.Ts = json.Number(t_finish.Unix())
@@ -66,11 +74,14 @@ func ComposePipelinesAtt(p_arr []webapi.Pipeline) []slack.Attachment {
 			case WORKFLOW_FAIL:
 				p_att.FooterIcon = `https://raw.githubusercontent.com/Razielt77/slackbot/master/img/failed.png`
 				p_att.Color ="#e83f43"
+			case WORKFLOW_RUNNING:
+				p_att.Color = "#6AA9DA"
+
 			default:
 				p_att.Color="#ccc"
 			}
 
-			p_att.Footer = "Last Executed: " + "<!date^" + strconv.FormatInt(t_finish.Unix(),10) + "^{date} at {time}|Not Set>"
+			p_att.Footer = "Last Executed: " + "<!date^" + strconv.FormatInt(t_start.Unix(),10) + "^{date} at {time}|Not Set>"
 
 			commit := NormalizeCommit(pipeline.LastWorkflow.CommitMsg,pipeline.LastWorkflow.CommitUrl)
 
