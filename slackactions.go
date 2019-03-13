@@ -34,7 +34,9 @@ type slackActionMsg struct {
 	TriggerID		string `json:"trigger_id"`
 }
 
-var ts string
+//var ts string
+
+//type slack
 
 type slackRsp struct {
 	ResponseType string `json:"response_type"`
@@ -241,8 +243,8 @@ func AskToken (callback *slack.InteractionCallback) bool {
 	dlg.Title = "Your Codefresh Token"
 	dlg.Elements = []slack.DialogElement{textElement}
 
-	ts = callback.ActionTs
-	fmt.Printf("Setting ts to: %s\n", ts )
+	//ts = callback.ActionTs
+	//fmt.Printf("Setting ts to: %s\n", ts )
 
 	slackApi.OpenDialog(callback.TriggerID,dlg)
 
