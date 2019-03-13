@@ -13,7 +13,7 @@ import (
 
 const (
 	Mongo_DB 			= "slackbot"
-	Mongo_collection	 = "users"
+	Mongo_users_collection	 = "users"
 )
 
 type User struct {
@@ -66,7 +66,7 @@ func ensureIndex(s *mgo.Session) {
 	session := s.Copy()
 	defer session.Close()
 
-	c := GetCollection(session)
+	c := GetUsersCollection(session)
 
 	index := mgo.Index{
 		Key:        []string{"teamid","userid"},
@@ -87,7 +87,7 @@ func AddUser(s *mgo.Session, user *User) (string, error) {
 	session := s.Copy()
 	defer session.Close()
 
-	c := GetCollection(session)
+	c := GetUsersCollection(session)
 
 	err := c.Insert(user)
 	if err != nil {
@@ -105,9 +105,9 @@ func AddUser(s *mgo.Session, user *User) (string, error) {
 	return user.UserID,err
 }
 
-func GetCollection(s *mgo.Session) *mgo.Collection {
+func GetUsersCollection(s *mgo.Session) *mgo.Collection {
 
-	return s.DB(Mongo_DB).C(Mongo_collection)
+	return s.DB(Mongo_DB).C(Mongo_users_collection)
 }
 
 
@@ -116,7 +116,7 @@ func GetUser(s *mgo.Session,teamid string, userid string) (*User, error) {
 	session := s.Copy()
 	defer session.Close()
 
-	c := GetCollection(session)
+	c := GetUsersCollection(session)
 
 
 	user := &User{}
@@ -141,7 +141,7 @@ func UpdateUser(s *mgo.Session, user *User) error {
 		session := s.Copy()
 		defer session.Close()
 
-		c := GetCollection(session)
+		c := GetUsersCollection(session)
 
 		err := c.Update(bson.M{"teamid": user.TeamID,"userid":user.UserID}, user)
 		if err != nil {

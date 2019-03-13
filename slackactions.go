@@ -36,7 +36,9 @@ type slackActionMsg struct {
 
 //var ts string
 
-//type slack
+type slackUnfurlActionResponse struct {
+	IsAppUnfurl	bool	`json:"is_app_unfurl"`
+}
 
 type slackRsp struct {
 	ResponseType string `json:"response_type"`
@@ -57,6 +59,19 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 
 	payload := req.Form.Get("payload")
 	fmt.Printf("received payload %s\n", payload)
+
+
+	unfurlResponse := slackUnfurlActionResponse{IsAppUnfurl:false}
+	err = json.Unmarshal([]byte(payload), &unfurlResponse)
+	if err != nil {
+		fmt.Println("error:", err)
+		return false
+	}
+
+	if unfurlResponse.IsAppUnfurl{
+		fmt.Println("Response received from unfurl action")
+		return true
+	}
 
 
 	intcallback := slack.InteractionCallback{}
