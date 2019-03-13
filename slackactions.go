@@ -54,7 +54,7 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 	}
 
 	payload := req.Form.Get("payload")
-	//fmt.Printf("received payload %s\n", payload)
+	fmt.Printf("received payload %s\n", payload)
 
 
 	intcallback := slack.InteractionCallback{}

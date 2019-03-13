@@ -173,13 +173,10 @@ func ComposeWorkflowAttachment(workflow *webapi.Workflow) *slack.Attachment{
 
 	att.Fields = append(att.Fields,field)
 
-	start,duration := ExtractStartAndDuration(workflow.CreatedTS,workflow.FinishedTS)
-	field = slack.AttachmentField{
-		Title: "Start Time",
-		Value: "<!date^" + start + "^{date} at {time}|Not Set>",
-		Short:	true}
+	finish_ts := workflow.FinishedTS
 
-	att.Fields = append(att.Fields,field)
+
+
 
 	var status string
 	switch workflow.Status{
@@ -192,10 +189,19 @@ func ComposeWorkflowAttachment(workflow *webapi.Workflow) *slack.Attachment{
 	case WORKFLOW_RUNNING:
 		att.Color = "#6AA9DA"
 		status = ":gear: Running"
+		finish_ts = ""
 	default:
 		att.Color = "#ccc"
 		status = workflow.Status
 	}
+
+	start,duration := ExtractStartAndDuration(workflow.CreatedTS,finish_ts)
+	field = slack.AttachmentField{
+		Title: "Start Time",
+		Value: "<!date^" + start + "^{date} at {time}|Not Set>",
+		Short:	true}
+
+	att.Fields = append(att.Fields,field)
 
 	field = slack.AttachmentField{
 		Title: "Status",
@@ -243,10 +249,16 @@ func ExtractStartAndDuration(start,finish string) (string, string){
 		fmt.Println(err)
 	}
 
-	t_finish, err := time.Parse(time.RFC3339, finish)
-	if err != nil {
-		fmt.Println(err)
+	var t_finish time.Time
+	if finish != ""{
+		t_finish, err = time.Parse(time.RFC3339, finish)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}else{
+		t_finish = time.Now()
 	}
+
 	duration_t := t_finish.Sub(t_start)
 	duration := strconv.Itoa(int (duration_t.Minutes())) + " minutes."
 
