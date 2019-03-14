@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/Razielt77/cf-webapi-go"
-	"github.com/nlopes/slack"
-	"github.com/nlopes/slack/slackevents"
+	"github.com/Razielt77/slack"
+	"github.com/Razielt77/slack/slackevents"
 	"gopkg.in/mgo.v2"
 	"regexp"
 	"strconv"

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/nlopes/slack"
+	"github.com/Razielt77/slack"
 	"io/ioutil"
 	"net/http"
 	"strings"

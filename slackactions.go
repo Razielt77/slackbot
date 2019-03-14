@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Razielt77/cf-webapi-go"
-	"github.com/nlopes/slack"
+	"github.com/Razielt77/slack"
 	"gopkg.in/mgo.v2"
 	"net/http"
 )
@@ -70,7 +70,7 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 
 	if unfurlResponse.IsAppUnfurl{
 		fmt.Println("Response received from unfurl action")
-		return true
+		//return true
 	}
 
 
