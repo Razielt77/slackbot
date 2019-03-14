@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Razielt77/cf-webapi-go"
-	"github.com/Razielt77/slack"
+	"github.com/nlopes/slack"
 	"regexp"
 	"strconv"
 	"strings"

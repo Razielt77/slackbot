@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Razielt77/cf-webapi-go"
-	"github.com/Razielt77/slack"
+	"github.com/nlopes/slack"
 	"gopkg.in/mgo.v2"
 	"net/http"
 )
@@ -61,6 +61,8 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 	fmt.Printf("received payload %s\n", payload)
 
 
+	intcallback := slack.InteractionCallback{}
+
 	unfurlResponse := slackUnfurlActionResponse{IsAppUnfurl:false}
 	err = json.Unmarshal([]byte(payload), &unfurlResponse)
 	if err != nil {
@@ -70,18 +72,21 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 
 	if unfurlResponse.IsAppUnfurl{
 		fmt.Println("Response received from unfurl action")
+		//TODO currently ignoring error in unmarshaling an unfurl action message - atachment id received as string instead of int
+		json.Unmarshal([]byte(payload), &intcallback)
 		//return true
+	}else{
+		err = json.Unmarshal([]byte(payload), &intcallback)
+		if err != nil {
+			fmt.Println("error:", err)
+			return false
+		}
 	}
 
 
-	intcallback := slack.InteractionCallback{}
 
 
-	err = json.Unmarshal([]byte(payload), &intcallback)
-	if err != nil {
-		fmt.Println("error:", err)
-		return false
-	}
+
 
 
 	switch intcallback.Type {

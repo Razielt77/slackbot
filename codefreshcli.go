@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Razielt77/slack"
+	"github.com/nlopes/slack"
 	"log"
 	"os/exec"
 	"regexp"
