@@ -67,6 +67,7 @@ func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", Handler(session))
 	router.HandleFunc("/action", HandleAction(session))
+	router.HandleFunc("/tokenlist", ListTokens(session))
 	router.HandleFunc("/accountchange", AccountChangeCommand(session))
 	router.HandleFunc("/pipelineslist", PipelineListAction(session))
 	router.HandleFunc("/events", HandleEvent(session))
@@ -174,6 +175,34 @@ func PipelineListAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Req
 		}
 
 		go SendPipelinesListMsg(usr,cmd)
+
+		return
+
+	}
+}
+
+func ListTokens (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
+	return func (w http.ResponseWriter, r *http.Request){
+
+		w.WriteHeader(http.StatusOK)
+
+		cmd := ParseSlashCommand(w,r)
+		if cmd == nil {
+			return
+		}
+
+		session := s.Copy()
+		defer session.Close()
+
+		team, _ := GetTeam(session,cmd.TeamID)
+
+		if team == nil {
+			lgn := ComposeLogin(FIRST_TIME_USER)
+			go DoPost(cmd.ResponseURL,lgn)
+			return
+		}
+
+		go SendTokensList(team,cmd)
 
 		return
 

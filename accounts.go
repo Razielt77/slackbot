@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	FIRST_TIME_USER = "It seems like you never added a Codefresh's token. Please add your account's token."
+	FIRST_TIME_USER = "It seems like your team never added a Codefresh's token. Please add your account's token."
 )
 
 
@@ -94,6 +94,40 @@ func ComposeAccountsAtt(user *User) []slack.Attachment {
 		}else {
 			att.Text = "*Currently Active*"
 		}
+		attarr = append(attarr,att)
+	}
+	return attarr
+}
+
+func SendTokensList(team *Team, cmd *slack.SlashCommand){
+
+
+	accountsMsg := slack.Msg{}
+
+	var err error = nil
+
+	accountsMsg.Text = 	"Currently there are " + string(len(team.CFAccounts)) + " account tokens for your team: " + team.Team
+
+
+	accountsMsg.Attachments = ComposeTokensAtt(team)
+	accountsMsg.ResponseType = IN_CHANNEL
+
+
+	_, err = DoPost(cmd.ResponseURL,accountsMsg)
+
+	if err != nil {
+		fmt.Printf("Cannot send message\n")
+	}
+}
+
+func ComposeTokensAtt(team *Team) []slack.Attachment {
+	var attarr []slack.Attachment = nil
+	for _, account := range team.CFAccounts{
+		token := account.Token[len(account.Token)-4:]
+		att := slack.Attachment{
+			Title: "Account Name: " + account.Name,
+			Color:"#11b5a4",
+			Text:"Token ends with: " + token + "\nSubmitted by: "+ account.UserName}
 		attarr = append(attarr,att)
 	}
 	return attarr
