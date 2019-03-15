@@ -14,6 +14,7 @@ import (
 const (
 	Mongo_DB 			= "slackbot"
 	Mongo_users_collection	 = "users"
+	Mongo_teams_collection	 = "teams"
 )
 
 type User struct {
@@ -26,6 +27,8 @@ type User struct {
 	ActiveAccount	string `json:"active_account"`
 	CFAccounts []webapi.AccountInfo `json:"cf_accounts"`
 }
+
+
 
 func (u *User)SetToken(token string) error{
 
@@ -80,6 +83,8 @@ func ensureIndex(s *mgo.Session) {
 		fmt.Println(err)
 	}
 }
+
+
 
 
 func AddUser(s *mgo.Session, user *User) (string, error) {
@@ -159,5 +164,3 @@ func UpdateUser(s *mgo.Session, user *User) error {
 
 }
 
-
-var users = make(map[string]User)

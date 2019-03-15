@@ -59,6 +59,7 @@ func main() {
 	}*/
 
 	ensureIndex(session)
+	ensureTeamIndex(session)
 
 	slackApi = slack.New(access_token)
 

@@ -84,11 +84,6 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 	}
 
 
-
-
-
-
-
 	switch intcallback.Type {
 	case slack.InteractionTypeDialogSubmission:
 		switch intcallback.CallbackID{
@@ -239,8 +234,6 @@ func SwitchAccount (s *mgo.Session, callback *slack.InteractionCallback) bool {
 
 	return true
 }
-
-
 
 
 
