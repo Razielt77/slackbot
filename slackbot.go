@@ -116,7 +116,7 @@ func HandleEvent (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 		buf.ReadFrom(r.Body)
 		body := buf.String()
 
-		fmt.Printf("Body: %s\n",body)
+		//fmt.Printf("Body: %s\n",body)
 
 		eventsAPIEvent, e := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: ver_token}))
 		//eventsAPIEvent, e := slackevents.ParseEvent(json.RawMessage(body))

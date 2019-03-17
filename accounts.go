@@ -107,7 +107,8 @@ func SendTokensList(team *Team, cmd *slack.SlashCommand){
 
 	var err error = nil
 
-	accountsMsg.Text = 	"Currently there are " + string(len(team.CFAccounts)) + " account tokens for your team: " + team.Team
+	PrintJson(team)
+	accountsMsg.Text = 	"Currently these are the tokens for your team: " + team.Team
 
 
 	accountsMsg.Attachments = ComposeTokensAtt(team)
@@ -193,7 +194,7 @@ func UpdateTeamTokens (s *mgo.Session, callback *slack.InteractionCallback) bool
 
 	var accountsList string
 	for _, account := range team.CFAccounts{
-		accountsList = accountsList + `*` + account.Name +`*\n`
+		accountsList = accountsList + "*" + account.Name +"*\n"
 	}
 	msg := slack.Msg{Text: ":white_check_mark: *Token successfully added!*"}
 	att := slack.Attachment{

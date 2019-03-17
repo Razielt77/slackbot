@@ -25,6 +25,13 @@ func SendSimpleText (url, message string) error {
 	return err
 }
 
+func PrintJson(i interface{}){
+
+	bytes, _ := json.Marshal(i)
+	fmt.Println(string(bytes))
+
+}
+
 func DoPost (url string, v interface{})([]byte, error){
 
 

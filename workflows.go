@@ -79,8 +79,64 @@ func SendPipelinesWorkflow(s *mgo.Session, intcallback *slack.InteractionCallbac
 	}
 }
 
-
 func EnrichSharedLink(s *mgo.Session, team_id string, event *slackevents.LinkSharedEvent){
+
+	session := s.Copy()
+	defer session.Close()
+	m := make(map[string]slack.Attachment)
+	var att *slack.Attachment
+
+	url := event.Links[0].URL
+	build := ExtractBuildFromURL(url)
+
+	if build == ""{
+		return
+	}
+
+	//retrieving team
+	team, _ := GetTeam(session,team_id)
+
+
+	if team == nil {
+		att = ComposeLoginAttacment("Add Codefresh's token for enriched link messages")
+		m[event.Links[0].URL] = *att
+		//slackApi.UnfurlMessage(event.Channel,event.MessageTimeStamp.String(),m)
+		return
+	}
+
+	workflow := GetWorkflowInfo(build,team)
+
+	if workflow == nil {
+		att = ComposeLoginAttacment("Token for this account wan't submitted. Add Token to view enriched link for this account")
+		m[event.Links[0].URL] = *att
+		//slackApi.UnfurlMessage(event.Channel,event.MessageTimeStamp.String(),m)
+		return
+	}
+
+	att = ComposeWorkflowAttachment(workflow)
+
+	m[event.Links[0].URL] = *att
+
+	slackApi.UnfurlMessage(event.Channel,event.MessageTimeStamp.String(),m)
+
+}
+
+func GetWorkflowInfo(id string, team *Team) *webapi.Workflow{
+
+	var workflow *webapi.Workflow = nil
+
+	for _, account := range team.CFAccounts{
+		if account.Token != ""{
+			client := webapi.New(account.Token)
+			workflow, _ = client.GetBuild(id)
+			if workflow != nil {return workflow}
+		}
+	}
+	return workflow
+}
+
+
+func EnrichSharedLinkOld(s *mgo.Session, team_id string, event *slackevents.LinkSharedEvent){
 
 	session := s.Copy()
 	defer session.Close()
@@ -105,7 +161,7 @@ func EnrichSharedLink(s *mgo.Session, team_id string, event *slackevents.LinkSha
 		return
 	}
 
-	workflow := GetWorkflowInfo(build,usr)
+	workflow := GetWorkflowInfoOld(build,usr)
 
 	if workflow == nil {
 		att = ComposeLoginAttacment("Token for this account wan't submitted. Add Token to view enriched link for this account")
@@ -122,7 +178,7 @@ func EnrichSharedLink(s *mgo.Session, team_id string, event *slackevents.LinkSha
 
 }
 
-func GetWorkflowInfo(id string, usr *User) *webapi.Workflow{
+func GetWorkflowInfoOld(id string, usr *User) *webapi.Workflow{
 
 	var workflow *webapi.Workflow = nil
 
