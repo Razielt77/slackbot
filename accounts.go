@@ -123,7 +123,7 @@ func SendTokensList(team *Team, cmd *slack.SlashCommand){
 }
 
 func ComposeAddTokenAtt() *slack.Attachment {
-	att := &slack.Attachment{}
+	att := &slack.Attachment{CallbackID: ENTER_TOKEN}
 
 	att.Actions = []slack.AttachmentAction{{Name: "add-token", Text: "Add Token", Type: "button",Style:"primary" ,Value: "start"}}
 	return att
@@ -184,6 +184,8 @@ func UpdateTeamTokens (s *mgo.Session, callback *slack.InteractionCallback) bool
 			SendSimpleText(callback.ResponseURL,":heavy_exclamation_mark: *Invalid token*: "+ err.Error())
 			return false
 		}
+		fmt.Println("Printing Team before adding...")
+		PrintJson(team)
 		AddTeam(session,team)
 
 
