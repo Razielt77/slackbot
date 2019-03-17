@@ -177,7 +177,7 @@ func UpdateTeamTokens (s *mgo.Session, callback *slack.InteractionCallback) bool
 
 	if team == nil{
 
-		team = &Team{Team:callback.Team.Name,TeamID:callback.Team.ID}
+		team = &Team{Team:callback.Team.Domain,TeamID:callback.Team.ID}
 
 		err := AddTokenToTeam(token,team)
 		if err != nil {
