@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/Razielt77/cf-webapi-go"
 	"gopkg.in/mgo.v2"
@@ -12,6 +13,17 @@ type Team struct {
 	Team 			string `json:"team"`
 	ActiveAccount	string `json:"active_account"`
 	CFAccounts []webapi.AccountInfo `json:"cf_accounts"`
+}
+
+func (t *Team)AddToken(account *webapi.AccountInfo) error{
+
+	if account != nil {
+		t.CFAccounts = append(t.CFAccounts,*account)
+	}else{
+		fmt.Println("Error, cannot find account for submitted token")
+		return errors.New("nill account")
+	}
+	return nil
 }
 
 

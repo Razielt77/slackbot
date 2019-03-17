@@ -201,6 +201,8 @@ func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
 }
 
 
+
+
 func SwitchAccount (s *mgo.Session, callback *slack.InteractionCallback) bool {
 
 	//user := User{TeamID:callback.Team.ID,UserID:callback.User.ID,Name:callback.User.Name,Team:callback.Team.Name}

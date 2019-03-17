@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/Razielt77/cf-webapi-go"
 	"github.com/nlopes/slack"
 	"gopkg.in/mgo.v2"
 	"net/http"
@@ -131,6 +132,80 @@ func ComposeTokensAtt(team *Team) []slack.Attachment {
 		attarr = append(attarr,att)
 	}
 	return attarr
+}
+
+func GetAccountInfo(user *webapi.UserInfo) *webapi.AccountInfo{
+
+	for i, _ := range user.Accounts{
+		if user.Accounts[i].Name == user.ActiveAccount {
+			return  &user.Accounts[i]
+		}
+	}
+	return nil
+}
+
+
+func AddTokenToTeam(token string, team *Team) error{
+	cf_user, err := webapi.New(token).UserInfo()
+
+	if err != nil {
+		return err
+	}
+
+	err = team.AddToken(GetAccountInfo(cf_user))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateTeamTokens (s *mgo.Session, callback *slack.InteractionCallback) bool {
+
+	session := s.Copy()
+	defer session.Close()
+
+	team, _ := GetTeam(session,callback.Team.ID)
+	token := callback.Submission["cftoken"]
+
+	if team == nil{
+
+		team = &Team{Team:callback.Team.Name,TeamID:callback.Team.ID}
+
+		err := AddTokenToTeam(token,team)
+		if err != nil {
+			SendSimpleText(callback.ResponseURL,":heavy_exclamation_mark: *Invalid token*: "+ err.Error())
+			return false
+		}
+		AddTeam(session,team)
+
+
+	}else{
+
+		err := AddTokenToTeam(token,team)
+		if err != nil {
+			SendSimpleText(callback.ResponseURL,":heavy_exclamation_mark: *Invalid token*: "+ err.Error())
+			return false
+		}
+
+		UpdateTeam(s,team)
+	}
+
+
+	var accountsList string
+	for _, account := range team.CFAccounts{
+		accountsList = accountsList + `*` + account.Name +`*\n`
+	}
+	msg := slack.Msg{Text: ":white_check_mark: *Token successfully added!*"}
+	att := slack.Attachment{
+		Color:"#11b5a4",
+		Text: "Enriched URLs are now supported for the following accounts:\n"+ accountsList}
+
+	msg.Attachments = append(msg.Attachments,att)
+
+	DoPost(callback.ResponseURL,msg)
+
+
+	return true
 }
 
 
