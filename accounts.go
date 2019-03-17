@@ -112,14 +112,21 @@ func SendTokensList(team *Team, cmd *slack.SlashCommand){
 
 
 	accountsMsg.Attachments = ComposeTokensAtt(team)
+	accountsMsg.Attachments = append(accountsMsg.Attachments,*ComposeAddTokenAtt())
 	accountsMsg.ResponseType = IN_CHANNEL
-
 
 	_, err = DoPost(cmd.ResponseURL,accountsMsg)
 
 	if err != nil {
 		fmt.Printf("Cannot send message\n")
 	}
+}
+
+func ComposeAddTokenAtt() *slack.Attachment {
+	att := &slack.Attachment{}
+
+	att.Actions = []slack.AttachmentAction{{Name: "add-token", Text: "Add Token", Type: "button",Style:"primary" ,Value: "start"}}
+	return att
 }
 
 func ComposeTokensAtt(team *Team) []slack.Attachment {
