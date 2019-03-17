@@ -90,7 +90,8 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 		case ENTER_TOKEN:
 			fmt.Printf("token recieved (slack) is: %s\n",intcallback.Submission["cftoken"])
 			//w.WriteHeader(http.StatusOK)
-			SetToken(s, &intcallback)
+			//SetToken(s, &intcallback)
+			UpdateTeamTokens(s,&intcallback)
 		}
 
 	case slack.InteractionTypeInteractionMessage:
