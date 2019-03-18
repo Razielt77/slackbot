@@ -243,7 +243,7 @@ func SwitchAccount (s *mgo.Session, callback *slack.InteractionCallback) bool {
 func AskToken (callback *slack.InteractionCallback) bool {
 
 
-	fmt.Printf("Executing add-token action\n")
+	//fmt.Printf("Executing add-token action\n")
 
 	textElement := &slack.TextInputElement{}
 	textElement.Type = "text"
@@ -253,7 +253,7 @@ func AskToken (callback *slack.InteractionCallback) bool {
 
 	var dlg slack.Dialog
 	dlg.TriggerID = callback.TriggerID
-	//storing the desired account in the state
+	//storing the url in the state
 	dlg.State = callback.Actions[0].Value
 	dlg.CallbackID = callback.CallbackID
 	dlg.Title = "Your Codefresh Token"

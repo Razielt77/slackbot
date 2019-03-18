@@ -184,8 +184,7 @@ func UpdateTeamTokens (s *mgo.Session, callback *slack.InteractionCallback) bool
 			SendSimpleText(callback.ResponseURL,":heavy_exclamation_mark: *Invalid token*: "+ err.Error())
 			return false
 		}
-		fmt.Println("Printing Team before adding...")
-		PrintJson(team)
+
 		AddTeam(session,team)
 
 
@@ -205,10 +204,15 @@ func UpdateTeamTokens (s *mgo.Session, callback *slack.InteractionCallback) bool
 	for _, account := range team.CFAccounts{
 		accountsList = accountsList + "*" + account.Name +"*\n"
 	}
+
+	url_msg :=""
+	if callback.State != ""{
+		url_msg = "Now try copy paste your link again:\n" + callback.State
+	}
 	msg := slack.Msg{Text: ":white_check_mark: *Token successfully added!*"}
 	att := slack.Attachment{
 		Color:"#11b5a4",
-		Text: "Enriched URLs are now supported for the following accounts:\n"+ accountsList}
+		Text: "Enriched URLs are now supported for the following accounts:\n"+ accountsList + url_msg}
 
 	msg.Attachments = append(msg.Attachments,att)
 

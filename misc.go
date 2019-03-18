@@ -114,7 +114,7 @@ func ComposeLoginAttacment(msg ...string) *slack.Attachment{
 		Color:"#11b5a4",
 		CallbackID: ENTER_TOKEN,
 		Text: "Go to your Codefresh's Accounts Settings->Tokens to create your token."}
-	if len(msg) == 1{
+	if len(msg) > 0{
 		att.Title = msg[0]
 	}
 	att.Actions = []slack.AttachmentAction{{Name: "add-token", Text: "Enter Token", Type: "button",Style:"primary" ,Value: "start"}}
