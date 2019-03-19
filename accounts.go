@@ -8,9 +8,7 @@ import (
 	"net/http"
 )
 
-const (
-	FIRST_TIME_USER = "It seems like your team never added a Codefresh's token. Please add your account's token."
-)
+
 
 
 

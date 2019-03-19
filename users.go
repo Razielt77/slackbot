@@ -7,6 +7,7 @@ import (
 	"github.com/Razielt77/cf-webapi-go"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"github.com/nlopes/slack"
 )
 
 
@@ -163,4 +164,82 @@ func UpdateUser(s *mgo.Session, user *User) error {
 		return err
 
 }
+
+func SetUserToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
+
+	//user := User{TeamID:callback.Team.ID,UserID:callback.User.ID,Name:callback.User.Name,Team:callback.Team.Name}
+	session := s.Copy()
+	defer session.Close()
+
+	user, _ := GetUser(session,callback.Team.ID,callback.User.ID)
+	token := callback.Submission["cftoken"]
+
+	if user == nil{
+
+
+		user = &User{TeamID:callback.Team.ID,UserID:callback.User.ID,Name:callback.User.Name,Team:callback.Team.Name}
+
+		//retrieving user's accounts
+
+		cf_user, err := webapi.New(token).UserInfo()
+
+		if err != nil {
+			SendSimpleText(callback.ResponseURL,":heavy_exclamation_mark: *Invalid token*: "+ err.Error())
+			return false
+		}
+
+		user.CFUserName = cf_user.Name
+		user.CFAccounts = cf_user.Accounts
+		user.ActiveAccount = cf_user.ActiveAccount
+		user.Avatar = cf_user.UserData.Image
+		err = user.SetToken(token)
+
+		if err != nil{
+			fmt.Println(err)
+		}
+
+		AddUser(session,user)
+
+	}else{
+		//fmt.Printf("Token submitted to exisiting account")
+
+		//checking that tken is valid
+		cf_user, err := webapi.New(token).UserInfo()
+
+		if err != nil {
+			SendSimpleText(callback.ResponseURL,":heavy_exclamation_mark: *Invalid token*: "+ err.Error())
+			return false
+		}
+
+		if(cf_user.ActiveAccount != callback.State){
+			SendSimpleText(callback.ResponseURL,":heavy_exclamation_mark: *Invalid token*: Token doesn't match with selected account")
+			return false
+		}
+
+		user.ActiveAccount = callback.State
+		user.SetToken(token)
+		UpdateUser(s,user)
+	}
+
+	msg := slack.Msg{Text: ":white_check_mark: *Token successfully submitted!*"}
+	att := slack.Attachment{
+		Color:"#11b5a4",
+		Text: "Welcome *"+user.CFUserName +
+			"!*\nActive account is: *" +
+			user.ActiveAccount +
+			"*\nCurrently supported commands:\n" +
+			"*/cf-pipelines-list*  Lists pipelines.\n"+
+			"*/cf-pipelines-list-active*  Lists pipelines active past week.\n" +
+			"*/cf-switch-account* Switch between your Codefresh's accounts.\n",
+		ThumbURL: user.Avatar}
+
+	msg.Attachments = append(msg.Attachments,att)
+
+	DoPost(callback.ResponseURL,msg)
+
+
+	return true
+}
+
+
 

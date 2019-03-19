@@ -10,9 +10,7 @@ import (
 	"strings"
 )
 
-const (
-	IN_CHANNEL = "in_channel"
-)
+
 
 
 

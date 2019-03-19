@@ -12,13 +12,6 @@ import (
 )
 
 
-const (
-	NOT_AVAILABLE string  = "Not Available"
-	ACTIVE_PIPELINE_COMMAND string  = "/cf-pipelines-list-active"
-	ACTIVE_DURATION_IN_HOURS float64  = 72
-	PIPELINE_ACTION = "pipeline_action"
-	VIEW_BUILDS = "view_builds"
-)
 
 
 type Flag func() (string, webapi.OptionGen)

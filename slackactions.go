@@ -3,16 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Razielt77/cf-webapi-go"
 	"github.com/nlopes/slack"
 	"gopkg.in/mgo.v2"
 	"net/http"
 )
 
-const (
-	ENTER_TOKEN = "enter_token"
-	SWITCH_ACCOUNT = "switch_account"
-)
+
 
 type slackAction struct {
 	Name 			string `json:"name"`
@@ -40,10 +36,26 @@ type slackUnfurlActionResponse struct {
 	IsAppUnfurl	bool	`json:"is_app_unfurl"`
 }
 
-type slackRsp struct {
-	ResponseType string `json:"response_type"`
-	Text		string `json:"text"`
-	Attachments []slack.Attachment `json:"attachments"`
+
+
+func HandleAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
+	return func (w http.ResponseWriter, r *http.Request){
+
+		w.WriteHeader(http.StatusOK)
+		session := s.Copy()
+		defer session.Close()
+
+		var action slackActionMsg
+		//var rsp slackRsp
+
+		if r.Body == nil {
+			http.Error(w, "Please send a request body", 400)
+			return
+		}
+
+		action.ExecuteAction(s,r, true)
+
+	}
 }
 
 func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log bool) bool {
@@ -74,7 +86,6 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 		fmt.Println("Response received from unfurl action")
 		//TODO currently ignoring error in unmarshaling an unfurl action message - atachment id received as string instead of int
 		json.Unmarshal([]byte(payload), &intcallback)
-		//return true
 	}else{
 		err = json.Unmarshal([]byte(payload), &intcallback)
 		if err != nil {
@@ -120,82 +131,6 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 		fmt.Println("error:", err)
 		return false
 	}
-
-
-	return true
-}
-
-func SetToken (s *mgo.Session, callback *slack.InteractionCallback) bool {
-
-	//user := User{TeamID:callback.Team.ID,UserID:callback.User.ID,Name:callback.User.Name,Team:callback.Team.Name}
-	session := s.Copy()
-	defer session.Close()
-
-	user, _ := GetUser(session,callback.Team.ID,callback.User.ID)
-	token := callback.Submission["cftoken"]
-
-	if user == nil{
-
-
-		user = &User{TeamID:callback.Team.ID,UserID:callback.User.ID,Name:callback.User.Name,Team:callback.Team.Name}
-
-		//retrieving user's accounts
-
-		cf_user, err := webapi.New(token).UserInfo()
-
-		if err != nil {
-			SendSimpleText(callback.ResponseURL,":heavy_exclamation_mark: *Invalid token*: "+ err.Error())
-			return false
-		}
-
-		user.CFUserName = cf_user.Name
-		user.CFAccounts = cf_user.Accounts
-		user.ActiveAccount = cf_user.ActiveAccount
-		user.Avatar = cf_user.UserData.Image
-		err = user.SetToken(token)
-
-		if err != nil{
-			fmt.Println(err)
-		}
-
-		AddUser(session,user)
-
-	}else{
-		//fmt.Printf("Token submitted to exisiting account")
-
-		//checking that tken is valid
-		cf_user, err := webapi.New(token).UserInfo()
-
-		if err != nil {
-			SendSimpleText(callback.ResponseURL,":heavy_exclamation_mark: *Invalid token*: "+ err.Error())
-			return false
-		}
-
-		if(cf_user.ActiveAccount != callback.State){
-			SendSimpleText(callback.ResponseURL,":heavy_exclamation_mark: *Invalid token*: Token doesn't match with selected account")
-			return false
-		}
-
-		user.ActiveAccount = callback.State
-		user.SetToken(token)
-		UpdateUser(s,user)
-	}
-
-	msg := slack.Msg{Text: ":white_check_mark: *Token successfully submitted!*"}
-	att := slack.Attachment{
-		Color:"#11b5a4",
-		Text: "Welcome *"+user.CFUserName +
-			  "!*\nActive account is: *" +
-			   user.ActiveAccount +
-			  "*\nCurrently supported commands:\n" +
-			  "*/cf-pipelines-list*  Lists pipelines.\n"+
-			  "*/cf-pipelines-list-active*  Lists pipelines active past week.\n" +
-			  "*/cf-switch-account* Switch between your Codefresh's accounts.\n",
-		ThumbURL: user.Avatar}
-
-	msg.Attachments = append(msg.Attachments,att)
-
-	DoPost(callback.ResponseURL,msg)
 
 
 	return true

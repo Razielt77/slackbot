@@ -18,6 +18,15 @@ const (
 	SLACK_TOKEN_ENV_NAME = "TOKEN"
 	MONGO_URL_ENV_NAME = "MONGO"
 	SLACK_VER_ENV_NAME = "VER_TOKEN"
+	ENTER_TOKEN = "enter_token"
+	SWITCH_ACCOUNT = "switch_account"
+	NOT_AVAILABLE string  = "Not Available"
+	ACTIVE_PIPELINE_COMMAND string  = "/cf-pipelines-list-active"
+	ACTIVE_DURATION_IN_HOURS float64  = 72
+	PIPELINE_ACTION = "pipeline_action"
+	VIEW_BUILDS = "view_builds"
+	IN_CHANNEL = "in_channel"
+	FIRST_TIME_USER = "It seems like your team never added a Codefresh's token. Please add your account's token."
 )
 
 
@@ -76,27 +85,7 @@ func main() {
 }
 
 
-func HandleAction (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
-	return func (w http.ResponseWriter, r *http.Request){
 
-		w.WriteHeader(http.StatusOK)
-		session := s.Copy()
-		defer session.Close()
-
-		var action slackActionMsg
-		//var rsp slackRsp
-
-		if r.Body == nil {
-			http.Error(w, "Please send a request body", 400)
-			return
-		}
-
-		//extracting the command
-		action.ExecuteAction(s,r, true)
-
-
-	}
-}
 
 func HandleEvent (s *mgo.Session) func(w http.ResponseWriter, r *http.Request){
 	return func (w http.ResponseWriter, r *http.Request){
