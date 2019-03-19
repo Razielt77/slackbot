@@ -204,7 +204,7 @@ func UpdateTeamTokens (s *mgo.Session, callback *slack.InteractionCallback) bool
 	}
 
 	url_msg :=""
-	if callback.State != ""{
+	if callback.State != "start"{
 		url_msg = "Now try copy paste your link again:\n" + callback.State
 	}
 	msg := slack.Msg{Text: ":white_check_mark: *Token successfully added!*"}
