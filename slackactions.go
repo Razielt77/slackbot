@@ -116,7 +116,7 @@ func (r *slackActionMsg) ExecuteAction(s *mgo.Session,req *http.Request, log boo
 		case ENTER_TOKEN:
 			//w.WriteHeader(http.StatusOK)
 			AskToken(&intcallback)
-			go slackApi.DeleteMessage(intcallback.Channel.ID, intcallback.MessageTs)
+			//go slackApi.DeleteMessage(intcallback.Channel.ID, intcallback.MessageTs)
 		case PIPELINE_ACTION:
 			switch intcallback.Actions[0].Name {
 			case VIEW_BUILDS:
